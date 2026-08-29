@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Sahabat Kristus</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: ['class', '[data-theme="dark"]'],
+            theme: {
+                extend: {
+                    colors: {
+                        primary: 'var(--color-primary)', secondary: 'var(--color-secondary)',
+                        bgbase: 'var(--color-bg)', surface: 'var(--color-surface)', textmain: 'var(--color-text)',
+                    },
+                    spacing: { 'safe': 'env(safe-area-inset-bottom)' }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --color-primary: #3b82f6; --color-secondary: #60a5fa;
+            --color-bg: #e5e7eb;
+            --color-surface: #ffffff; --color-text: #1f2937;
+        }
+        [data-theme="dark"] {
+            --color-primary: #6366f1; --color-secondary: #818cf8;
+            --color-bg: #030712; --color-surface: #1f2937; --color-text: #f9fafb;
+        }
+        [data-theme="nature"] {
+            --color-primary: #10b981; --color-secondary: #34d399;
+            --color-bg: #d1fae5; --color-surface: #ffffff; --color-text: #064e3b;
+        }
+
+        body {
+            background-color: var(--color-bg); color: var(--color-text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0;
+        }
+        
+        #app-container {
+            width: 100%; max-width: 450px; height: 100dvh; max-height: 100dvh;
+            background-color: var(--color-surface);
+            position: relative; overflow: hidden; display: flex; flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .surface { background-color: var(--color-surface); }
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+        
+        .glass-nav {
+            background: rgba(var(--color-surface), 0.9); backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(128, 128, 128, 0.2); padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        #toast { transition: opacity 0.3s, transform 0.3s; transform: translateY(-20px); opacity: 0; pointer-events: none; }
+        #toast.show { transform: translateY(0); opacity: 1; }
+        .animate-slide-up { animation: slideUp 0.3s ease-out forwards; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    
+    <div id="app-container">
+        <!-- Toast Notifikasi -->
+        <div id="toast" class="absolute top-5 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-2xl z-[100] text-sm font-bold flex items-center gap-2 border border-gray-700 w-11/12 text-center justify-center">
+            <i class="fa-solid fa-circle-info text-blue-400"></i> <span id="toast-msg">Notifikasi</span>
+        </div>
+
+        <!-- PENDING SCREEN -->
+        <div id="pending-screen" class="absolute inset-0 z-[60] surface hidden flex-col justify-center items-center p-6 text-center">
+            <i class="fa-solid fa-hourglass-half text-6xl text-yellow-500 mb-6 animate-pulse"></i>
+            <h2 class="text-2xl font-bold mb-2">Menunggu Persetujuan</h2>
+            <p class="opacity-70 mb-8 max-w-xs text-sm">Akun Anda sedang diverifikasi oleh Admin Gereja lokal Anda. Mohon tunggu beberapa saat untuk keamanan bersama.</p>
+            <button onclick="window.appLogout()" class="text-red-500 font-bold border border-red-500 px-6 py-2 rounded-lg hover:bg-red-50 transition">Keluar Akun</button>
+        </div>
+
+        <!-- AUTH SCREEN (Login / Register) -->
+        <div id="auth-screen" class="absolute inset-0 z-50 surface flex flex-col p-6 overflow-y-auto">
+            <div class="w-full text-center py-6">
+                <i class="fa-solid fa-church text-5xl text-primary mb-3"></i>
+                <h1 class="text-2xl font-bold mb-1">Sahabat Kristus</h1>
+                <p class="mb-4 opacity-70 text-xs">Lintas Gereja, Satu Hati</p>
+                
+                <div class="surface p-5 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 text-left">
+                    <div class="flex border-b border-gray-200 dark:border-gray-700 mb-5">
+                        <button id="tab-login" onclick="window.uiSwitchAuth('login')" class="flex-1 py-2 font-bold text-primary border-b-2 border-primary transition-all text-sm">Masuk</button>
+                        <button id="tab-register" onclick="window.uiSwitchAuth('register')" class="flex-1 py-2 font-bold text-gray-400 border-b-2 border-transparent transition-all text-sm">Daftar Baru</button>
+                    </div>
+
+                    <!-- Form Login -->
+                    <form id="form-login" class="space-y-4">
+                        <div>
+                            <label class="block text-[11px] font-bold mb-1 opacity-70 uppercase">Nomor WhatsApp</label>
+                            <input type="number" id="login-wa" required class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-transparent focus:border-primary text-sm" placeholder="0812...">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold mb-1 opacity-70 uppercase">Password</label>
+                            <input type="password" id="login-pass" required class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-transparent focus:border-primary text-sm" placeholder="Masukkan password">
+                        </div>
+                        <button type="submit" id="btn-login" class="w-full bg-primary text-white font-bold py-3.5 rounded-xl mt-2 shadow-lg hover:opacity-90 active:scale-95 transition-all text-sm">Masuk Aplikasi</button>
+                    </form>
+
+                    <!-- Form Register -->
+                    <form id="form-register" class="space-y-4 hidden">
+                        <div>
+                            <label class="block text-[11px] font-bold mb-1 opacity-70 uppercase">Nama Lengkap</label>
+                            <input type="text" id="reg-name" required class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-transparent focus:border-primary text-sm" placeholder="Sesuai KTP / Dikenal">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold mb-1 opacity-70 uppercase">No. WhatsApp Aktif</label>
+                            <input type="number" id="reg-wa" required class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-transparent focus:border-primary text-sm" placeholder="0812...">
+                        </div>
+                        
+                        <div class="p-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800/50 space-y-3">
+                            <label class="block text-[11px] font-bold opacity-70 uppercase text-center border-b pb-1">Detail Lokasi (Domisili)</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="text" id="reg-prov" required class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent text-xs" placeholder="Provinsi">
+                                <input type="text" id="reg-kota" required class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent text-xs" placeholder="Kota/Kab">
+                                <input type="text" id="reg-kec" required class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent text-xs" placeholder="Kecamatan">
+                                <input type="text" id="reg-kel" required class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent text-xs" placeholder="Kelurahan/Desa">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-bold mb-1 opacity-70 uppercase">Pilih Gereja</label>
+                            <select id="reg-church" required class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-transparent focus:border-primary text-sm">
+                                <option value="">Memuat daftar gereja...</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold mb-1 opacity-70 uppercase">Buat Password</label>
+                            <input type="password" id="reg-pass" required minlength="6" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-transparent focus:border-primary text-sm" placeholder="Minimal 6 karakter">
+                        </div>
+                        
+                        <div class="flex items-start gap-3 mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
+                            <input type="checkbox" id="reg-faith" required class="mt-1 w-4 h-4 text-primary bg-white border-gray-300 rounded focus:ring-primary">
+                            <label for="reg-faith" class="text-[11px] font-medium leading-tight opacity-90 cursor-pointer">
+                                Saya mengaku dan percaya bahwa Yesus Kristus adalah Tuhan dan Juruselamat hidupku.
+                            </label>
+                        </div>
+
+                        <button type="submit" id="btn-register" class="w-full bg-secondary text-white font-bold py-3.5 rounded-xl mt-2 shadow-lg hover:opacity-90 active:scale-95 transition-all text-sm">Kirim Pendaftaran</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN APP SHELL -->
+        <div id="main-app" class="hidden flex-col h-full w-full relative">
+            <header class="surface shadow-sm px-4 py-3 flex justify-between items-center z-10 sticky top-0 shrink-0">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center"><i class="fa-solid fa-church text-primary"></i></div>
+                    <h1 class="font-bold text-lg tracking-tight">Sahabat Kristus</h1>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="window.uiToggleModal('modal-theme')" class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 flex justify-center items-center hover:bg-gray-200 transition"><i class="fa-solid fa-palette text-sm opacity-70"></i></button>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-y-auto w-full pb-[90px] pt-2 px-4 scroll-smooth" id="content-area">
+                
+                <!-- PAGE: BERANDA -->
+                <div id="page-beranda" class="page-section space-y-5 pb-4">
+                    <div id="admin-panel-btn" class="hidden w-full">
+                        <button onclick="window.uiToggleModal('modal-admin')" class="w-full bg-gradient-to-r from-gray-800 to-gray-900 text-white py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 shadow-lg hover:scale-[1.02] transition-transform">
+                            <i class="fa-solid fa-user-shield text-yellow-400"></i> Buka Panel Pengelola
+                        </button>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-primary to-secondary rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+                        <div class="relative z-10">
+                            <h2 class="text-xs font-bold uppercase tracking-wider opacity-80 mb-2 flex items-center gap-2"><i class="fa-solid fa-book-open"></i> Renungan Hari Ini</h2>
+                            <p id="beranda-verse-text" class="text-lg font-serif italic font-medium leading-relaxed">"Memuat..."</p>
+                            <p id="beranda-verse-ref" class="text-sm text-right mt-3 font-bold opacity-90">-</p>
+                        </div>
+                        <i class="fa-solid fa-cross absolute -right-6 -bottom-6 text-[100px] opacity-10 transform -rotate-12"></i>
+                    </div>
+
+                    <div id="section-global-ann">
+                        <h3 class="font-bold text-sm mb-2 flex items-center gap-2 text-primary"><i class="fa-solid fa-globe"></i> Info Lintas Gereja</h3>
+                        <div id="beranda-global-announcements" class="space-y-3"></div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-bold text-sm mb-2 flex items-center gap-2 text-secondary"><i class="fa-solid fa-thumbtack"></i> Info <span id="txt-local-church">Lokal</span></h3>
+                        <div id="beranda-local-announcements" class="space-y-3 mb-4"></div>
+                        <h3 class="font-bold text-sm mb-2 flex items-center gap-2 text-gray-500"><i class="fa-regular fa-clock"></i> Jadwal Ibadah</h3>
+                        <div id="beranda-local-schedules" class="space-y-2"></div>
+                    </div>
+                </div>
+
+                <!-- PAGE: TRANSPORTASI -->
+                <div id="page-transport" class="page-section hidden space-y-4">
+                    <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-4 rounded-xl flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-300 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-car-side"></i></div>
+                        <div>
+                            <h2 class="font-bold text-sm leading-tight mb-1">Nebeng & Jasa Antar</h2>
+                            <p class="text-[10px] opacity-70 leading-snug">Berbagi tumpangan gratis antar jemaat atau gunakan jasa antar dari jemaat tepercaya.</p>
+                        </div>
+                    </div>
+                    <div class="flex bg-gray-200/50 dark:bg-gray-800/50 rounded-xl p-1 relative">
+                        <button onclick="window.uiSwitchTransportTab('cari')" id="tab-cari" class="flex-1 py-2 text-sm font-bold rounded-lg bg-surface text-primary shadow-sm z-10 transition-all">Kendaraan Tersedia</button>
+                        <button onclick="window.uiSwitchTransportTab('beri')" id="tab-beri" class="flex-1 py-2 text-sm font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all">Butuh Jemputan</button>
+                    </div>
+                    
+                    <div id="view-cari-transport" class="space-y-4">
+                        <button onclick="window.uiToggleModal('modal-offer-transport')" class="w-full bg-primary text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-md"><i class="fa-solid fa-plus-circle"></i> Tawarkan Kendaraan Anda</button>
+                        <div id="list-available-rides" class="space-y-3 pb-4"></div>
+                    </div>
+                    
+                    <div id="view-beri-transport" class="hidden space-y-4">
+                        <button onclick="window.uiToggleModal('modal-req-transport')" class="w-full border-2 border-primary text-primary font-bold py-3.5 rounded-xl flex items-center justify-center gap-2"><i class="fa-solid fa-hand-sparkles"></i> Buat Permintaan Jemputan</button>
+                        <div id="list-requested-rides" class="space-y-3 pb-4"></div>
+                    </div>
+                </div>
+
+                <!-- PAGE: JASTIP -->
+                <div id="page-jastip" class="page-section hidden space-y-4">
+                    <div class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 p-4 rounded-xl flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-800 text-emerald-600 dark:text-emerald-300 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-bag-shopping"></i></div>
+                        <div>
+                            <h2 class="font-bold text-sm">Jastip Kolektif</h2>
+                            <p class="text-[10px] opacity-70">Titip beli bareng, hemat ongkir.</p>
+                        </div>
+                    </div>
+                    <button onclick="window.uiToggleModal('modal-offer-jastip')" class="w-full bg-emerald-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-md hover:bg-emerald-600 transition"><i class="fa-solid fa-shop"></i> Buka Titipan / PO Baru</button>
+                    <div id="list-jastip" class="grid grid-cols-1 gap-4 pb-4"></div>
+                </div>
+
+                <!-- PAGE: ALKITAB -->
+                <div id="page-alkitab" class="page-section hidden h-full flex flex-col space-y-4">
+                    <div class="surface p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 shrink-0">
+                        <div class="flex justify-between items-start mb-3">
+                            <div><h2 class="font-bold text-sm">Alkitab (AYT)</h2><p class="text-[10px] opacity-70">Baca offline (muat ayt.csv)</p></div>
+                            <i class="fa-solid fa-book-bible text-2xl text-primary opacity-50"></i>
+                        </div>
+                        <input type="file" id="csvFileInput" accept=".csv" class="block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-primary file:text-white cursor-pointer bg-gray-50 dark:bg-gray-800 rounded-lg p-2 border border-dashed border-gray-300"/>
+                        <div id="bible-controls" class="hidden flex gap-2 mt-2">
+                            <select id="book-select" class="flex-2 p-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-surface text-sm w-full font-bold" onchange="window.updateChapters()"></select>
+                            <select id="chapter-select" class="flex-1 p-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-surface text-sm w-24 font-bold" onchange="window.displayChapter()"></select>
+                        </div>
+                    </div>
+                    <div id="bible-content" class="flex-1 overflow-y-auto surface p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 text-lg leading-relaxed font-serif pb-6 text-center opacity-30 pt-16">
+                        <i class="fa-solid fa-file-csv text-5xl mb-4"></i><p class="text-sm font-sans font-medium">Unggah ayt.csv untuk membaca</p>
+                    </div>
+                </div>
+
+                <!-- PAGE: PROFIL -->
+                <div id="page-profil" class="page-section hidden space-y-4 pb-4">
+                    <div class="surface p-6 rounded-2xl shadow-sm text-center border border-gray-200 dark:border-gray-800 relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-20 bg-gradient-to-r from-primary to-secondary opacity-20"></div>
+                        <div class="relative w-24 h-24 bg-primary text-white rounded-full flex items-center justify-center text-4xl font-bold mx-auto mb-3 border-4 border-surface shadow-md"><span id="profile-initial">U</span></div>
+                        <h2 id="profile-name" class="font-bold text-xl">Nama</h2>
+                        <p id="profile-church" class="text-xs font-semibold text-primary mb-1">Gereja</p>
+                        <span id="profile-role" class="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Role</span>
+                        <div class="flex justify-center gap-4 mt-4 opacity-80 text-[11px] bg-gray-50 dark:bg-gray-800 p-2 rounded-lg">
+                            <p><i class="fa-brands fa-whatsapp text-green-500"></i> <span id="profile-wa">-</span></p>
+                            <p><i class="fa-solid fa-location-dot text-red-500"></i> <span id="profile-area">-</span></p>
+                        </div>
+                    </div>
+                    <div class="surface p-5 rounded-2xl shadow-sm flex flex-col items-center justify-center border border-gray-200 dark:border-gray-800">
+                        <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-500 flex items-center justify-center text-lg mb-2"><i class="fa-solid fa-star"></i></div>
+                        <p id="profile-points" class="text-3xl font-black">0</p>
+                        <p class="text-xs font-bold opacity-60 uppercase mt-1">Poin Pelayanan</p>
+                    </div>
+                    <button onclick="window.appLogout()" class="w-full border-2 border-red-500/50 text-red-500 font-bold py-3.5 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/10 transition">Keluar Aplikasi</button>
+                </div>
+            </main>
+
+            <!-- NAV BOTTOM -->
+            <nav class="absolute bottom-0 w-full h-[70px] glass-nav flex justify-around items-center px-2 z-50 rounded-b-lg">
+                <button onclick="window.uiNav('beranda')" class="nav-btn flex-1 flex flex-col items-center justify-center gap-1 text-primary transition">
+                    <i class="fa-solid fa-house text-xl mb-0.5"></i><span class="text-[10px] font-bold">Beranda</span>
+                </button>
+                <button onclick="window.uiNav('transport')" class="nav-btn flex-1 flex flex-col items-center justify-center gap-1 text-gray-400 transition">
+                    <i class="fa-solid fa-car text-xl mb-0.5"></i><span class="text-[10px] font-bold">Transport</span>
+                </button>
+                <button onclick="window.uiNav('jastip')" class="nav-btn flex-1 flex flex-col items-center justify-center gap-1 text-gray-400 transition">
+                    <i class="fa-solid fa-shop text-xl mb-0.5"></i><span class="text-[10px] font-bold">Jastip</span>
+                </button>
+                <button onclick="window.uiNav('alkitab')" class="nav-btn flex-1 flex flex-col items-center justify-center gap-1 text-gray-400 transition">
+                    <i class="fa-solid fa-book-bible text-xl mb-0.5"></i><span class="text-[10px] font-bold">Alkitab</span>
+                </button>
+                <button onclick="window.uiNav('profil')" class="nav-btn flex-1 flex flex-col items-center justify-center gap-1 text-gray-400 transition">
+                    <i class="fa-solid fa-circle-user text-xl mb-0.5"></i><span class="text-[10px] font-bold">Profil</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- === MODALS === -->
+        
+        <!-- Modal Admin -->
+        <div id="modal-admin" class="absolute inset-0 bg-black/60 z-[70] hidden flex-col justify-end backdrop-blur-sm">
+            <div class="surface rounded-t-3xl p-6 h-[90vh] overflow-y-auto w-full animate-slide-up flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                    <div><h3 class="font-bold text-xl"><i class="fa-solid fa-shield-halved text-primary"></i> Pengelola</h3><p id="admin-modal-subtitle" class="text-[10px] font-bold text-gray-500 uppercase">Akses Admin</p></div>
+                    <button onclick="window.uiToggleModal('modal-admin')" class="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full text-gray-500"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="flex gap-2 overflow-x-auto pb-2 border-b border-gray-200 dark:border-gray-700 mb-4 shrink-0">
+                    <button onclick="window.uiSwitchAdminTab('users')" id="tab-adm-users" class="px-3 py-1.5 text-[11px] font-bold bg-primary text-white rounded-lg whitespace-nowrap">Anggota Pending</button>
+                    <button onclick="window.uiSwitchAdminTab('local')" id="tab-adm-local" class="px-3 py-1.5 text-[11px] font-bold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg whitespace-nowrap">Gereja Lokal</button>
+                    <button onclick="window.uiSwitchAdminTab('global')" id="tab-adm-global" class="hidden px-3 py-1.5 text-[11px] font-bold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg whitespace-nowrap">Global</button>
+                </div>
+                <div class="flex-1 overflow-y-auto pb-6">
+                    <div id="adm-view-users" class="space-y-3"><p class="text-[11px] opacity-70 mb-2">Daftar anggota yang menunggu disetujui.</p><div id="admin-pending-users-list" class="space-y-3"></div></div>
+                    <div id="adm-view-local" class="hidden space-y-4">
+                        <div class="p-4 rounded-xl border border-blue-200 bg-blue-50 dark:bg-blue-900/10"><h4 class="font-bold text-sm mb-2">Pengumuman Lokal</h4><input type="text" id="adm-loc-ann-title" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Judul"><textarea id="adm-loc-ann-desc" rows="2" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Isi..."></textarea><button onclick="window.saveLocalAnn()" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg text-xs w-full">Kirim</button></div>
+                        <div class="p-4 rounded-xl border border-purple-200 bg-purple-50 dark:bg-purple-900/10"><h4 class="font-bold text-sm mb-2">Jadwal Lokal</h4><input type="text" id="adm-loc-sch-name" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Nama Ibadah"><input type="text" id="adm-loc-sch-time" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Waktu (Minggu, 07:00)"><input type="text" id="adm-loc-sch-loc" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Lokasi (Gedung Utama)"><button onclick="window.saveLocalSchedule()" class="bg-purple-600 text-white font-bold py-2 px-4 rounded-lg text-xs w-full">Simpan</button></div>
+                    </div>
+                    <div id="adm-view-global" class="hidden space-y-4">
+                        <div class="p-4 rounded-xl border border-yellow-200 bg-yellow-50 dark:bg-yellow-900/10"><h4 class="font-bold text-sm mb-2">Renungan Global</h4><textarea id="adm-glob-verse" rows="2" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2"></textarea><input type="text" id="adm-glob-ref" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2"><button onclick="window.saveGlobalVerse()" class="bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg text-xs w-full">Update</button></div>
+                        <div class="p-4 rounded-xl border border-red-200 bg-red-50 dark:bg-red-900/10"><h4 class="font-bold text-sm mb-2">Pengumuman Global</h4><input type="text" id="adm-glob-ann-title" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Judul"><textarea id="adm-glob-ann-desc" rows="2" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Isi..."></textarea><button onclick="window.saveGlobalAnn()" class="bg-red-600 text-white font-bold py-2 px-4 rounded-lg text-xs w-full">Siarkan</button></div>
+                        <div class="p-4 rounded-xl border border-green-200 bg-green-50 dark:bg-green-900/10"><h4 class="font-bold text-sm mb-2">Tambah Gereja Baru</h4><div class="flex gap-2"><input type="text" id="adm-glob-church" class="flex-1 p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs" placeholder="Nama Gereja"><button onclick="window.addGlobalChurch()" class="bg-green-600 text-white font-bold py-2 px-4 rounded-lg text-xs">Tambah</button></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Transport Offer -->
+        <div id="modal-offer-transport" class="absolute inset-0 bg-black/60 z-[70] hidden flex-col justify-end backdrop-blur-sm">
+            <div class="surface rounded-t-3xl p-6 w-full animate-slide-up h-[85vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-5"><h3 class="font-bold text-lg"><i class="fa-solid fa-car-side text-primary mr-2"></i>Tawarkan Tumpangan/Jasa</h3><button onclick="window.uiToggleModal('modal-offer-transport')" class="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full"><i class="fa-solid fa-xmark"></i></button></div>
+                <form id="form-offer-ride" class="space-y-4">
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Jenis Layanan</label>
+                        <select id="offer-type" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-transparent text-sm focus:border-primary" onchange="window.toggleTariff('offer')">
+                            <option value="gratis">Tumpangan Gratis (Nebeng)</option>
+                            <option value="berbayar">Jasa Antar Berbayar (Ojek/Taksi)</option>
+                        </select>
+                    </div>
+                    <div id="offer-tariff-container" class="hidden">
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase text-orange-500">Tarif / Biaya</label>
+                        <input type="text" id="offer-tariff" class="w-full p-3 rounded-xl border border-orange-300 bg-orange-50 dark:bg-orange-900/20 text-sm focus:border-orange-500" placeholder="Cth: Rp 15.000 / Kesepakatan">
+                    </div>
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Tujuan Akhir</label><input type="text" id="offer-dest" required class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-transparent text-sm"></div>
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Rute yang dilewati</label><input type="text" id="offer-route" required class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-transparent text-sm"></div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Sisa Kursi</label><input type="number" id="offer-seats" required min="1" max="6" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-transparent text-center text-sm"></div>
+                        <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Jam Jalan</label><input type="time" id="offer-time" required class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-transparent text-sm"></div>
+                    </div>
+                    <button type="submit" class="w-full bg-primary text-white font-bold py-3.5 rounded-xl shadow-lg mt-2 text-sm">Posting Kendaraan (+10 Poin)</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal Transport Request -->
+        <div id="modal-req-transport" class="absolute inset-0 bg-black/60 z-[70] hidden flex-col justify-end backdrop-blur-sm">
+            <div class="surface rounded-t-3xl p-6 w-full animate-slide-up h-[85vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-5"><h3 class="font-bold text-lg"><i class="fa-solid fa-hand-sparkles text-primary mr-2"></i>Minta Jemputan</h3><button onclick="window.uiToggleModal('modal-req-transport')" class="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full"><i class="fa-solid fa-xmark"></i></button></div>
+                <form id="form-req-ride" class="space-y-4">
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Jenis Kebutuhan</label>
+                        <select id="req-type" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-transparent text-sm focus:border-primary">
+                            <option value="gratis">Minta Tumpangan Gratis</option>
+                            <option value="berbayar">Cari Jasa Antar (Bersedia Bayar)</option>
+                        </select>
+                    </div>
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Tujuan</label><input type="text" id="req-dest" required class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-transparent text-sm"></div>
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Titik Tunggu (Patokan)</label><input type="text" id="req-location" required class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-transparent text-sm"></div>
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Jumlah Orang</label><input type="number" id="req-people" required min="1" max="4" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-transparent text-sm" value="1"></div>
+                    <button type="submit" class="w-full border-2 border-primary text-primary font-bold py-3.5 rounded-xl mt-2 text-sm">Kirim Permintaan</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal Jastip -->
+        <div id="modal-offer-jastip" class="absolute inset-0 bg-black/60 z-[70] hidden flex-col justify-end backdrop-blur-sm">
+            <div class="surface rounded-t-3xl p-6 w-full animate-slide-up h-[85vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-5"><h3 class="font-bold text-lg"><i class="fa-solid fa-shop text-emerald-500 mr-2"></i>Buka PO / Jastip</h3><button onclick="window.uiToggleModal('modal-offer-jastip')" class="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full"><i class="fa-solid fa-xmark"></i></button></div>
+                <form id="form-offer-jastip" class="space-y-4">
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Nama Barang / Toko</label><input type="text" id="jastip-name" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm"></div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase text-emerald-600">Biaya Jasa (Rp)</label><input type="text" id="jastip-fee" class="w-full p-3 rounded-xl border border-emerald-300 bg-emerald-50 dark:bg-emerald-900/20 text-sm" placeholder="Gratis / 5000"></div>
+                        <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase text-red-500">Ambil Di (Lokasi)</label><input type="text" id="jastip-pickup" required class="w-full p-3 rounded-xl border border-red-300 bg-red-50 dark:bg-red-900/20 text-sm" placeholder="Rumah/Pos Satpam"></div>
+                    </div>
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Batas Waktu (Deadline)</label><input type="datetime-local" id="jastip-deadline" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm"></div>
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Keterangan Tambahan</label><textarea id="jastip-desc" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" rows="2"></textarea></div>
+                    <button type="submit" class="w-full bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-lg mt-2 text-sm">Buka Jastip (+15 Poin)</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal Tema -->
+        <div id="modal-theme" class="absolute inset-0 bg-black/60 z-[70] hidden flex-col justify-end backdrop-blur-sm">
+            <div class="surface rounded-t-3xl p-6 w-full animate-slide-up"><div class="flex justify-between items-center mb-5"><h3 class="font-bold text-lg">Pilih Tema</h3><button onclick="window.uiToggleModal('modal-theme')" class="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full"><i class="fa-solid fa-xmark"></i></button></div><div class="grid grid-cols-3 gap-3"><button onclick="window.uiSetTheme('light')" class="p-3 rounded-xl bg-blue-50 text-blue-700 font-bold border border-blue-200 text-sm">Terang</button><button onclick="window.uiSetTheme('dark')" class="p-3 rounded-xl bg-gray-800 text-white font-bold border border-gray-600 text-sm">Gelap</button><button onclick="window.uiSetTheme('nature')" class="p-3 rounded-xl bg-emerald-50 text-emerald-700 font-bold border border-emerald-200 text-sm">Alam</button></div></div>
+        </div>
+    </div> 
+
+    <!-- === SCRIPT UI === -->
+    <script>
+        window.uiNav = function(pageId) {
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.replace('text-primary', 'text-gray-400'));
+            event.currentTarget.classList.replace('text-gray-400', 'text-primary');
+            document.querySelectorAll('.page-section').forEach(p => p.classList.add('hidden'));
+            document.getElementById('page-' + pageId).classList.remove('hidden');
+        };
+        
+        window.uiSwitchAuth = function(tab) {
+            const l = document.getElementById('tab-login'), r = document.getElementById('tab-register');
+            if(tab === 'login') {
+                l.classList.replace('text-gray-400', 'text-primary'); l.classList.replace('border-transparent', 'border-primary');
+                r.classList.replace('text-primary', 'text-gray-400'); r.classList.replace('border-primary', 'border-transparent');
+                document.getElementById('form-login').classList.remove('hidden'); document.getElementById('form-register').classList.add('hidden');
+            } else {
+                r.classList.replace('text-gray-400', 'text-primary'); r.classList.replace('border-transparent', 'border-primary');
+                l.classList.replace('text-primary', 'text-gray-400'); l.classList.replace('border-primary', 'border-transparent');
+                document.getElementById('form-login').classList.add('hidden'); document.getElementById('form-register').classList.remove('hidden');
+            }
+        };
+
+        window.uiSwitchTransportTab = function(tab) {
+            const c = document.getElementById('tab-cari'), b = document.getElementById('tab-beri');
+            if(tab === 'cari') { 
+                c.className = "flex-1 py-2 text-sm font-bold rounded-lg bg-surface text-primary shadow-sm z-10 transition-all"; 
+                b.className = "flex-1 py-2 text-sm font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all"; 
+                document.getElementById('view-cari-transport').classList.remove('hidden'); document.getElementById('view-beri-transport').classList.add('hidden'); 
+            } else { 
+                b.className = "flex-1 py-2 text-sm font-bold rounded-lg bg-surface text-primary shadow-sm z-10 transition-all"; 
+                c.className = "flex-1 py-2 text-sm font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all"; 
+                document.getElementById('view-cari-transport').classList.add('hidden'); document.getElementById('view-beri-transport').classList.remove('hidden'); 
+            }
+        };
+
+        window.uiSwitchAdminTab = function(tab) {
+            document.querySelectorAll('#modal-admin button[id^="tab-adm-"]').forEach(b => { b.classList.replace('bg-primary', 'bg-gray-100'); b.classList.replace('text-white', 'text-gray-600'); });
+            event.currentTarget.classList.replace('bg-gray-100', 'bg-primary'); event.currentTarget.classList.replace('text-gray-600', 'text-white');
+            document.getElementById('adm-view-users').classList.add('hidden'); document.getElementById('adm-view-local').classList.add('hidden'); document.getElementById('adm-view-global').classList.add('hidden');
+            document.getElementById('adm-view-' + tab).classList.remove('hidden');
+        };
+
+        window.uiToggleModal = (id) => { 
+            const m = document.getElementById(id);
+            if(m.classList.contains('hidden')) { m.classList.remove('hidden'); m.classList.add('flex'); }
+            else { m.classList.add('hidden'); m.classList.remove('flex'); }
+        };
+        
+        window.uiShowToast = (msg) => { document.getElementById('toast-msg').textContent = msg; const t = document.getElementById('toast'); t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 4000); };
+        window.uiSetTheme = (t) => { document.documentElement.setAttribute('data-theme', t); localStorage.setItem('sk_theme', t); window.uiToggleModal('modal-theme'); };
+        if(localStorage.getItem('sk_theme')) { document.documentElement.setAttribute('data-theme', localStorage.getItem('sk_theme')); }
+        
+        window.getWaLink = (phone, text) => { let p = phone.toString().trim(); if(p.startsWith('0')) p = '62' + p.substring(1); return `https://wa.me/${p}?text=${encodeURIComponent(text)}`; };
+        
+        window.toggleTariff = (context) => {
+            const type = document.getElementById(context + '-type').value;
+            const container = document.getElementById(context + '-tariff-container');
+            if(type === 'berbayar') { container.classList.remove('hidden'); document.getElementById(context + '-tariff').setAttribute('required', 'true'); } 
+            else { container.classList.add('hidden'); document.getElementById(context + '-tariff').removeAttribute('required'); }
+        };
+
+        setTimeout(() => {
+            if(document.getElementById('reg-church').options.length <= 1) {
+                document.getElementById('reg-church').innerHTML += '<option value="Gereja Default">Gereja Default (Offline Mode)</option>';
+            }
+        }, 3000);
+    </script>
+
+    <!-- === SCRIPT FIREBASE LOGIC === -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, getDoc, setDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "dummy", projectId: "dummy" };
+        
+        // Proteksi Mode File Lokal
+        if (firebaseConfig.apiKey === "dummy" && window.location.protocol === "file:") {
+            setTimeout(() => { alert("PERHATIAN: Database dimatikan.\n\nSistem keamanan mendeteksi aplikasi ini dibuka langsung dari file (file:///) tanpa server.\n\nJika ingin fitur login dan data berfungsi normal, mohon gunakan aplikasi ini di halaman Preview sebelumnya, atau pasang di Web Hosting."); }, 1500);
+        }
+
+        let app, auth, db;
+        try { app = initializeApp(firebaseConfig); auth = getAuth(app); db = getFirestore(app); } catch(e) {}
+        
+        const appId = 'sahabat-kristus-db-v4'; 
+
+        let currentUser = null; let userData = null;
+        let allProfilesCache = []; let globalContentCache = null; let localContentCache = null;
+
+        const getEmailFromWa = (wa) => `${wa.replace(/\D/g, '')}@sk4.app`;
+        const getSafeChurchId = (name) => name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+
+        const loadPublicChurches = async () => {
+            if(!auth || !db) return;
+            try {
+                if(!auth.currentUser) await signInAnonymously(auth);
+                const docSnap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'globals', 'church_list'));
+                let list = docSnap.exists() ? docSnap.data().churches : ['Gereja Pusat'];
+                document.getElementById('reg-church').innerHTML = '<option value="">Pilih Gereja Asal...</option>' + list.map(c => `<option value="${c}">${c}</option>`).join('');
+            } catch (e) {}
+        };
+
+        if(auth) {
+            onAuthStateChanged(auth, async (user) => {
+                if (user && !user.isAnonymous) {
+                    currentUser = user;
+                    document.getElementById('auth-screen').classList.add('hidden');
+                    listenToMyProfile();
+                } else {
+                    document.getElementById('main-app').classList.add('hidden');
+                    document.getElementById('pending-screen').classList.add('hidden');
+                    document.getElementById('auth-screen').classList.remove('hidden');
+                    loadPublicChurches();
+                }
+            });
+        }
+
+        document.getElementById('form-login').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if(firebaseConfig.apiKey === 'dummy') { window.uiShowToast("Mode Offline: Gagal terhubung ke Database"); return; }
+            const wa = document.getElementById('login-wa').value; const pass = document.getElementById('login-pass').value;
+            try { 
+                document.getElementById('btn-login').textContent = "Memeriksa..."; 
+                await signInWithEmailAndPassword(auth, getEmailFromWa(wa), pass); 
+            } catch(err) { 
+                window.uiShowToast("Gagal! Nomor WA belum terdaftar atau Password salah."); 
+                document.getElementById('btn-login').textContent = "Masuk Aplikasi"; 
+            }
+        });
+
+        document.getElementById('form-register').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if(firebaseConfig.apiKey === 'dummy') { window.uiShowToast("Mode Offline: Gagal terhubung ke Database"); return; }
+            
+            const name = document.getElementById('reg-name').value;
+            const wa = document.getElementById('reg-wa').value;
+            const area = `${document.getElementById('reg-kel').value}, Kec. ${document.getElementById('reg-kec').value}, ${document.getElementById('reg-kota').value}, ${document.getElementById('reg-prov').value}`;
+            const church = document.getElementById('reg-church').value;
+            const pass = document.getElementById('reg-pass').value;
+            
+            try {
+                document.getElementById('btn-register').textContent = "Mendaftarkan...";
+                let initRole = 'user'; let initStatus = 'pending';
+                if(wa === '0000' && pass === 'admin.kristus') { initRole = 'superadmin'; initStatus = 'approved'; }
+
+                const cred = await createUserWithEmailAndPassword(auth, getEmailFromWa(wa), pass);
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', cred.user.uid), {
+                    name, wa, area, church, role: initRole, status: initStatus, points: 0,
+                    prov: document.getElementById('reg-prov').value, kota: document.getElementById('reg-kota').value,
+                    kec: document.getElementById('reg-kec').value, kel: document.getElementById('reg-kel').value, createdAt: serverTimestamp()
+                });
+                window.uiShowToast(initRole === 'superadmin' ? "Akses Super Admin Aktif!" : "Pendaftaran Berhasil! Menunggu Approval Admin.");
+            } catch(err) {
+                if (err.code === 'auth/email-already-in-use') {
+                    window.uiShowToast("Nomor WA ini sudah terdaftar! Silakan ke tab 'Masuk'.");
+                } else {
+                    window.uiShowToast("Gagal daftar: Pastikan koneksi stabil.");
+                }
+                document.getElementById('btn-register').textContent = "Kirim Pendaftaran";
+            }
+        });
+
+        window.appLogout = async () => { if(auth) await signOut(auth); window.location.reload(); };
+
+        function listenToMyProfile() {
+            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', currentUser.uid), (docSnap) => {
+                if(docSnap.exists()) {
+                    userData = { uid: currentUser.uid, ...docSnap.data() };
+                    if(userData.status === 'pending') {
+                        document.getElementById('pending-screen').classList.remove('hidden'); document.getElementById('main-app').classList.add('hidden');
+                    } else {
+                        document.getElementById('pending-screen').classList.add('hidden'); document.getElementById('main-app').classList.remove('hidden'); document.getElementById('main-app').classList.add('flex');
+                        setupApprovedApp();
+                    }
+                } else {
+                    // AUTO-FIX: Hapus akun yang nyangkut di memori (Auth) tapi tidak punya data profile (Database).
+                    window.uiShowToast("Mereset data login yang kadaluarsa...");
+                    currentUser.delete().catch(()=>{}).finally(() => { auth.signOut().then(() => window.location.reload()); });
+                }
+            });
+        }
+
+        function setupApprovedApp() {
+            document.getElementById('profile-name').textContent = userData.name;
+            document.getElementById('profile-initial').textContent = userData.name.charAt(0).toUpperCase();
+            document.getElementById('profile-church').innerHTML = `<i class="fa-solid fa-church mr-1"></i> ${userData.church}`;
+            document.getElementById('profile-role').textContent = userData.role;
+            document.getElementById('profile-wa').textContent = userData.wa;
+            document.getElementById('profile-area').textContent = userData.kel + ', ' + userData.kota;
+            document.getElementById('profile-points').textContent = userData.points || 0;
+            document.getElementById('txt-local-church').textContent = userData.church;
+
+            if(userData.role === 'admin' || userData.role === 'superadmin') {
+                document.getElementById('admin-panel-btn').classList.remove('hidden');
+                document.getElementById('admin-modal-subtitle').textContent = `Admin ${userData.role === 'superadmin' ? 'Global' : userData.church}`;
+                if(userData.role === 'superadmin') document.getElementById('tab-adm-global').classList.remove('hidden');
+                listenToAllProfilesForAdmin();
+            }
+
+            listenToGlobals(); listenToLocalChurch(userData.church); listenToRides(); listenToJastip();
+        }
+
+        function listenToGlobals() {
+            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'globals', 'content'), (docSnap) => {
+                let data = docSnap.exists() ? docSnap.data() : { verse: "Bersukacitalah senantiasa.", ref: "1 Tesalonika 5:16", announcements: [] };
+                globalContentCache = data;
+                document.getElementById('beranda-verse-text').textContent = `"${data.verse}"`; document.getElementById('beranda-verse-ref').textContent = `- ${data.ref}`;
+                
+                const c = document.getElementById('beranda-global-announcements');
+                if(!data.announcements || data.announcements.length === 0) c.innerHTML = '<p class="text-[11px] opacity-50 p-2 text-center bg-gray-50 rounded-lg">Belum ada info global.</p>';
+                else c.innerHTML = data.announcements.map((a,i) => `<div class="surface p-4 rounded-xl border border-blue-200 bg-blue-50 relative"><h4 class="font-bold text-sm text-blue-800 mb-1">${a.title}</h4><p class="text-[11px] opacity-80 leading-relaxed">${a.desc}</p>${userData.role === 'superadmin' ? `<button onclick="window.delGlobAnn(${i})" class="absolute top-2 right-2 text-red-500 bg-white rounded-full w-6 h-6 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>` : ''}</div>`).join('');
+                if(userData.role==='superadmin') { document.getElementById('adm-glob-verse').value = data.verse || ''; document.getElementById('adm-glob-ref').value = data.ref || ''; }
+            });
+        }
+
+        function listenToLocalChurch(churchName) {
+            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'church_content', getSafeChurchId(churchName)), (docSnap) => {
+                let data = docSnap.exists() ? docSnap.data() : { announcements: [], schedules: [] }; localContentCache = data;
+                const ac = document.getElementById('beranda-local-announcements');
+                if(!data.announcements || data.announcements.length === 0) ac.innerHTML = '<p class="text-[11px] opacity-50 p-2 text-center bg-gray-50 rounded-lg">Belum ada info lokal.</p>';
+                else ac.innerHTML = data.announcements.map((a,i) => `<div class="surface p-4 rounded-xl border border-gray-200 relative"><h4 class="font-bold text-sm text-gray-800 mb-1">${a.title}</h4><p class="text-[11px] opacity-70 leading-relaxed">${a.desc}</p>${(userData.role==='admin' || userData.role==='superadmin') ? `<button onclick="window.delLocAnn(${i})" class="absolute top-2 right-2 text-red-400 bg-gray-100 rounded-full w-6 h-6"><i class="fa-solid fa-xmark"></i></button>` : ''}</div>`).join('');
+                const sc = document.getElementById('beranda-local-schedules');
+                if(!data.schedules || data.schedules.length === 0) sc.innerHTML = '<p class="text-[11px] opacity-50 p-2 text-center bg-gray-50 rounded-lg">Belum ada jadwal ibadah.</p>';
+                else sc.innerHTML = data.schedules.map((s,i) => `<div class="surface p-3 rounded-xl border-l-4 border-primary bg-gray-50 relative flex justify-between items-center"><div><h4 class="font-bold text-[13px]">${s.name}</h4><p class="text-[10px] opacity-70 mt-1"><i class="fa-regular fa-clock"></i> ${s.time} &nbsp; <i class="fa-solid fa-location-dot"></i> ${s.loc}</p></div>${(userData.role==='admin' || userData.role==='superadmin') ? `<button onclick="window.delLocSch(${i})" class="text-red-400 text-xs"><i class="fa-solid fa-trash"></i></button>` : ''}</div>`).join('');
+            });
+        }
+
+        function listenToAllProfilesForAdmin() {
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'profiles'), (snap) => {
+                allProfilesCache = []; snap.forEach(d => allProfilesCache.push({ id: d.id, ...d.data() })); renderAdminUsers();
+            });
+        }
+        function renderAdminUsers() {
+            let users = allProfilesCache.filter(u => u.status === 'pending');
+            if (userData.role === 'admin') users = users.filter(u => u.church === userData.church);
+            const container = document.getElementById('admin-pending-users-list');
+            if(users.length === 0) { container.innerHTML = '<p class="text-center opacity-50 py-4 text-xs">Tidak ada pendaftar baru.</p>'; return; }
+            container.innerHTML = users.map(u => `<div class="surface p-3 rounded-xl border flex justify-between items-center"><div><h4 class="font-bold text-xs">${u.name} <span class="text-[9px] bg-gray-200 px-1 rounded">${u.church}</span></h4><p class="text-[10px] opacity-70">${u.wa} • Kel. ${u.kel}</p></div><div class="flex flex-col gap-1"><button onclick="window.updateUser('${u.id}', 'approved', 'user')" class="bg-green-500 text-white text-[10px] px-2 py-1.5 rounded font-bold">Terima Anggota</button>${userData.role === 'superadmin' ? `<button onclick="window.updateUser('${u.id}', 'approved', 'admin')" class="bg-blue-500 text-white text-[10px] px-2 py-1.5 rounded font-bold">Jadikan Admin</button>` : ''}</div></div>`).join('');
+        }
+
+        window.updateUser = async (uid, status, role) => { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', uid), { status, role }); window.uiShowToast("Status anggota diperbarui!"); };
+        window.saveGlobalVerse = async () => { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'globals', 'content'), { verse: document.getElementById('adm-glob-verse').value, ref: document.getElementById('adm-glob-ref').value }, { merge: true }); window.uiShowToast("Renungan disimpan"); };
+        window.saveGlobalAnn = async () => {
+            const title = document.getElementById('adm-glob-ann-title').value; const desc = document.getElementById('adm-glob-ann-desc').value; if(!title || !desc) return;
+            let anns = globalContentCache?.announcements || []; anns.unshift({ title, desc });
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'globals', 'content'), { announcements: anns }, { merge: true });
+            document.getElementById('adm-glob-ann-title').value = ''; document.getElementById('adm-glob-ann-desc').value = ''; window.uiShowToast("Pengumuman Global dikirim");
+        };
+        window.delGlobAnn = async (idx) => { let anns = globalContentCache.announcements; anns.splice(idx, 1); await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'globals', 'content'), { announcements: anns }, { merge: true }); };
+        
+        window.saveLocalAnn = async () => {
+            const title = document.getElementById('adm-loc-ann-title').value; const desc = document.getElementById('adm-loc-ann-desc').value; if(!title || !desc) return;
+            let anns = localContentCache?.announcements || []; anns.unshift({ title, desc });
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'church_content', getSafeChurchId(userData.church)), { announcements: anns }, { merge: true });
+            document.getElementById('adm-loc-ann-title').value = ''; document.getElementById('adm-loc-ann-desc').value = ''; window.uiShowToast("Info Lokal dikirim");
+        };
+        window.delLocAnn = async (idx) => { let anns = localContentCache.announcements; anns.splice(idx, 1); await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'church_content', getSafeChurchId(userData.church)), { announcements: anns }, { merge: true }); };
+
+        window.saveLocalSchedule = async () => {
+            const name = document.getElementById('adm-loc-sch-name').value; const time = document.getElementById('adm-loc-sch-time').value; const loc = document.getElementById('adm-loc-sch-loc').value; if(!name || !time) return;
+            let sch = localContentCache?.schedules || []; sch.push({ name, time, loc });
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'church_content', getSafeChurchId(userData.church)), { schedules: sch }, { merge: true });
+            document.getElementById('adm-loc-sch-name').value = ''; document.getElementById('adm-loc-sch-time').value = ''; document.getElementById('adm-loc-sch-loc').value = ''; window.uiShowToast("Jadwal disimpan");
+        };
+        window.delLocSch = async (idx) => { let sch = localContentCache.schedules; sch.splice(idx, 1); await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'church_content', getSafeChurchId(userData.church)), { schedules: sch }, { merge: true }); };
+
+        window.addGlobalChurch = async () => {
+            const cname = document.getElementById('adm-glob-church').value; if(!cname) return;
+            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'globals', 'church_list'); const docSnap = await getDoc(docRef);
+            let list = docSnap.exists() ? docSnap.data().churches : ['Gereja Pusat']; if(!list.includes(cname)) list.push(cname);
+            await setDoc(docRef, { churches: list }); document.getElementById('adm-glob-church').value = ''; window.uiShowToast("Gereja Baru Ditambahkan");
+        };
+
+        document.getElementById('form-offer-ride')?.addEventListener('submit', async (e) => { 
+            e.preventDefault(); 
+            const typeSvc = document.getElementById('offer-type').value;
+            const tariff = typeSvc === 'berbayar' ? document.getElementById('offer-tariff').value : 'Gratis';
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'rides'), { type: 'offer', svcType: typeSvc, tariff: tariff, driverName: userData.name, driverChurch: userData.church, driverWa: userData.wa, driverUid: currentUser.uid, dest: document.getElementById('offer-dest').value, route: document.getElementById('offer-route').value, seats: parseInt(document.getElementById('offer-seats').value), time: document.getElementById('offer-time').value, status: 'active', createdAt: serverTimestamp() }); 
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', currentUser.uid), { points: (userData.points || 0) + 10 }); window.uiToggleModal('modal-offer-transport'); e.target.reset(); window.toggleTariff('offer'); window.uiShowToast("Kendaraan ditawarkan! (+10 Poin)"); 
+        });
+        
+        document.getElementById('form-req-ride')?.addEventListener('submit', async (e) => { 
+            e.preventDefault(); 
+            const typeSvc = document.getElementById('req-type').value;
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'rides'), { type: 'request', svcType: typeSvc, passName: userData.name, passChurch: userData.church, passWa: userData.wa, passUid: currentUser.uid, dest: document.getElementById('req-dest').value, location: document.getElementById('req-location').value, people: parseInt(document.getElementById('req-people').value), status: 'active', createdAt: serverTimestamp() }); 
+            window.uiToggleModal('modal-req-transport'); e.target.reset(); window.uiShowToast("Permintaan jemputan dikirim!"); 
+        });
+        
+        function listenToRides() {
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'rides'), (snapshot) => {
+                const offers = []; const requests = [];
+                snapshot.forEach(doc => { const d = { id: doc.id, ...doc.data() }; if (d.status === 'active') d.type === 'offer' ? offers.push(d) : requests.push(d); });
+                document.getElementById('list-available-rides').innerHTML = offers.length ? offers.map(o => `
+                    <div class="surface p-4 rounded-xl border relative shadow-sm border-l-4 ${o.svcType === 'berbayar' ? 'border-l-orange-400' : 'border-l-green-400'}">
+                        <div class="absolute top-0 right-0 ${o.svcType === 'berbayar' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'} text-[9px] font-bold px-2 py-1 rounded-bl-lg">
+                            ${o.svcType === 'berbayar' ? 'JASA ANTAR BERBAYAR' : 'NEBENG GRATIS'}
+                        </div>
+                        <div class="flex gap-3 mt-2">
+                            <div class="w-10 h-10 rounded-lg bg-gray-100 text-gray-700 flex items-center justify-center font-bold">${o.driverName.charAt(0)}</div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-sm">${o.driverName} <span class="text-[9px] bg-gray-100 px-1 rounded">${o.driverChurch}</span></h4>
+                                <p class="font-bold text-primary text-sm mb-1 line-clamp-1">${o.dest}</p>
+                                <p class="text-[10px] opacity-70 mb-1">Lewat: ${o.route} • Berangkat: ${o.time}</p>
+                                <p class="text-[10px] font-bold ${o.svcType === 'berbayar' ? 'text-orange-500' : 'text-green-500'}">Tarif: ${o.tariff} | Sisa ${o.seats} Kursi</p>
+                                <div class="flex gap-2 mt-3">
+                                    <a href="${getWaLink(o.driverWa, `Syalom ${o.driverName}, saya ${userData?.name} dari ${userData?.church}. Apakah kursi tujuan ${o.dest} masih sedia?`)}" target="_blank" class="flex-1 bg-green-500 text-white text-[11px] font-bold py-2 rounded-lg text-center shadow-sm">Hubungi via WA</a>
+                                    ${(o.driverUid === userData?.uid || userData?.role === 'superadmin') ? `<button onclick="window.deleteDocById('rides', '${o.id}')" class="bg-red-50 text-red-500 px-3 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>`).join('') : '<p class="text-center opacity-50 text-xs py-4">Belum ada kendaraan yang tersedia.</p>';
+                
+                document.getElementById('list-requested-rides').innerHTML = requests.length ? requests.map(r => `
+                    <div class="surface p-4 rounded-xl border relative shadow-sm border-l-4 ${r.svcType === 'berbayar' ? 'border-l-orange-400' : 'border-l-green-400'}">
+                        <div class="absolute top-0 right-0 ${r.svcType === 'berbayar' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'} text-[9px] font-bold px-2 py-1 rounded-bl-lg">
+                            ${r.svcType === 'berbayar' ? 'CARI JASA ANTAR (BAYAR)' : 'CARI NEBENG (GRATIS)'}
+                        </div>
+                        <div class="flex gap-3 mt-2">
+                            <div class="w-10 h-10 rounded-lg bg-gray-100 text-gray-500 flex items-center justify-center font-bold">${r.passName.charAt(0)}</div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-sm">${r.passName} <span class="text-[9px] bg-gray-100 px-1 rounded">${r.passChurch}</span></h4>
+                                <p class="text-xs text-gray-700 mt-1">Ingin ke: <span class="font-bold">${r.dest}</span></p>
+                                <p class="text-[10px] text-red-500 font-medium mt-1"><i class="fa-solid fa-location-dot"></i> Tunggu di: ${r.location} (${r.people} Org)</p>
+                                <div class="flex gap-2 mt-3">
+                                    <a href="${getWaLink(r.passWa, `Syalom ${r.passName}, saya ${userData?.name}. Saya bersedia jemput di ${r.location}.`)}" target="_blank" class="flex-1 bg-primary text-white text-[11px] font-bold py-2 rounded-lg text-center shadow-sm">Tawarkan Jemputan</a>
+                                    ${(r.passUid === userData?.uid || userData?.role === 'superadmin') ? `<button onclick="window.deleteDocById('rides', '${r.id}')" class="bg-red-50 text-red-500 px-3 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>`).join('') : '<p class="text-center opacity-50 text-xs py-4">Tidak ada permintaan jemputan.</p>';
+            });
+        }
+
+        document.getElementById('form-offer-jastip')?.addEventListener('submit', async (e) => { 
+            e.preventDefault(); 
+            const feeInput = document.getElementById('jastip-fee').value.trim(); const fee = feeInput === '' ? 'Gratis' : feeInput;
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'jastips'), { openerName: userData.name, openerChurch: userData.church, openerWa: userData.wa, openerUid: currentUser.uid, itemName: document.getElementById('jastip-name').value, fee: fee, pickupLoc: document.getElementById('jastip-pickup').value, deadline: document.getElementById('jastip-deadline').value, desc: document.getElementById('jastip-desc').value, status: 'open', createdAt: serverTimestamp() }); 
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', currentUser.uid), { points: (userData.points || 0) + 15 }); window.uiToggleModal('modal-offer-jastip'); e.target.reset(); window.uiShowToast("Jastip dibuka! (+15 Poin)"); 
+        });
+        
+        function listenToJastip() {
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'jastips'), (snapshot) => {
+                const jastips = []; snapshot.forEach(doc => { if (doc.data().status === 'open') jastips.push({ id: doc.id, ...doc.data() }); });
+                document.getElementById('list-jastip').innerHTML = jastips.length ? jastips.map(j => `
+                    <div class="surface p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col relative">
+                        ${(j.openerUid === userData?.uid || userData?.role === 'superadmin') ? `<button onclick="window.deleteDocById('jastips', '${j.id}')" class="absolute top-2 right-2 text-red-400 bg-red-50 rounded-full w-6 h-6 flex justify-center items-center"><i class="fa-solid fa-xmark text-xs"></i></button>` : ''}
+                        <div class="flex justify-between items-start mb-2"><h4 class="font-bold text-emerald-600 text-sm max-w-[70%]">${j.itemName}</h4></div>
+                        <div class="flex gap-2 mb-3">
+                            <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[9px] font-bold px-2 py-1 rounded">Biaya Jasa: ${j.fee}</span>
+                            <span class="bg-red-50 text-red-600 border border-red-200 text-[9px] font-bold px-2 py-1 rounded line-clamp-1"><i class="fa-solid fa-location-dot"></i> ${j.pickupLoc}</span>
+                        </div>
+                        <p class="text-[11px] opacity-80 mb-3 flex-1 bg-gray-50 p-2 rounded">${j.desc}</p>
+                        <p class="text-[9px] text-red-500 font-bold mb-3">Batas PO: ${new Date(j.deadline).toLocaleString('id-ID', {weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</p>
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-[10px]">${j.openerName.charAt(0)}</div>
+                            <div class="text-[10px]"><span class="font-bold block">${j.openerName}</span><span class="opacity-70">${j.openerChurch}</span></div>
+                        </div>
+                        <a href="${getWaLink(j.openerWa, `Syalom ${j.openerName}, saya ${userData?.name} mau ikut PO/Jastip ${j.itemName}.`)}" target="_blank" class="w-full text-center bg-emerald-500 text-white text-xs font-bold py-2.5 rounded-lg shadow-sm hover:bg-emerald-600 transition">Ikut Titip via WA</a>
+                    </div>`).join('') : '<div class="col-span-full text-center opacity-50 py-4 text-xs">Belum ada PO/Jastip yang buka.</div>';
+            });
+        }
+        window.deleteDocById = async (collectionName, docId) => { if(confirm('Hapus postingan ini?')) { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', collectionName, docId)); window.uiShowToast("Postingan dihapus."); } };
+
+        document.getElementById('csvFileInput').addEventListener('change', (e) => {
+            const file = e.target.files[0]; if (!file) return; window.uiShowToast("Memproses file...");
+            Papa.parse(file, { header: true, skipEmptyLines: true, complete: function(results) {
+                let bibleData = {};
+                results.data.forEach(row => { const b = row.abbr || row.book; const c = row.chapter; if (!b || !c) return; if (!bibleData[b]) bibleData[b] = {}; if (!bibleData[b][c]) bibleData[b][c] = []; bibleData[b][c].push(row); });
+                window.bibleDataCache = bibleData;
+                const bs = document.getElementById('book-select'); bs.innerHTML = '';
+                Object.keys(bibleData).forEach(bName => { const o = document.createElement('option'); o.value = bName; o.textContent = bName; bs.appendChild(o); });
+                document.getElementById('bible-controls').classList.remove('hidden'); document.getElementById('csvFileInput').classList.add('hidden');
+                window.updateChapters(); window.uiShowToast("Alkitab siap dibaca!");
+            }});
+        });
+        window.updateChapters = () => {
+            const b = document.getElementById('book-select').value; const cs = document.getElementById('chapter-select'); cs.innerHTML = '';
+            if (window.bibleDataCache[b]) { Object.keys(window.bibleDataCache[b]).sort((a,b)=>parseInt(a)-parseInt(b)).forEach(ch => { const o = document.createElement('option'); o.value = ch; o.textContent = "Psl " + ch; cs.appendChild(o); }); }
+            window.displayChapter();
+        };
+        window.displayChapter = () => {
+            const b = document.getElementById('book-select').value; const c = document.getElementById('chapter-select').value; const div = document.getElementById('bible-content');
+            if (!b || !c || !window.bibleDataCache[b][c]) return;
+            div.innerHTML = `<h2 class="text-xl font-bold mb-5 text-center border-b pb-3 font-sans text-primary">${b} ${c}</h2>` + window.bibleDataCache[b][c].map(v => `${v.title ? `<h3 class="text-sm font-bold mt-5 mb-2 text-secondary font-sans uppercase tracking-wider">${v.title}</h3>` : ''}<div class="mb-3 flex gap-3"><sup class="font-bold text-gray-400 mt-1.5 min-w-[1.2rem] text-right font-sans text-[10px]">${v.verse}</sup><span class="text-[15px] leading-relaxed text-gray-800 dark:text-gray-200">${v.text.replace(/<[^>]+>/g, '')}</span></div>`).join('');
+            div.classList.remove('text-center', 'opacity-30', 'pt-16');
+        };
+    </script>
+</body>
+</html>
