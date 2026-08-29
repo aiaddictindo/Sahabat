@@ -478,24 +478,20 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, doc, getDoc, setDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // ======================================================================
-        // PERHATIAN: BAGIAN INI WAJIB DIGANTI JIKA DI-UPLOAD KE GITHUB PAGES
-        // ======================================================================
         let firebaseConfig = {
             apiKey: "AIzaSyA8g0YxIzirNm8u3T1QKredTZFxg7FKMZs", 
             projectId: "sahabatkristus",
             authDomain: "sahabatkristus.firebaseapp.com"
         };
         
-        // Peringatan jika masih menggunakan dummy config di Web Hosting
-        if (firebaseConfig.apiKey === "dummy" && window.location.protocol !== "file:") {
-            setTimeout(() => { 
-                window.uiShowToast("PERINGATAN: Anda belum memasukkan API Key Firebase Anda di dalam kode.");
-            }, 2000);
-        }
-
         let app, auth, db;
-        try { app = initializeApp(firebaseConfig); auth = getAuth(app); db = getFirestore(app); } catch(e) {}
+        try { 
+            app = initializeApp(firebaseConfig); 
+            auth = getAuth(app); 
+            db = getFirestore(app); 
+        } catch(e) {
+            console.error("Firebase Init Error:", e);
+        }
         
         const appId = 'sahabat-kristus-db-v5'; 
 
@@ -519,24 +515,27 @@
             });
         }
 
+        // PERBAIKAN: Menampilkan Error Asli Firebase saat Login
         document.getElementById('form-login').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if(firebaseConfig.apiKey === 'dummy') { window.uiShowToast("Gagal Login: Koneksi Database Belum Diatur (Lihat Source Code)"); return; }
-            
             const wa = document.getElementById('login-wa').value; const pass = document.getElementById('login-pass').value;
             try { 
                 document.getElementById('btn-login').textContent = "Memeriksa..."; 
                 await signInWithEmailAndPassword(auth, getEmailFromWa(wa), pass); 
             } catch(err) { 
-                window.uiShowToast("Gagal! Nomor WA belum terdaftar atau Password salah."); 
+                console.error("Login Error:", err);
+                if(err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
+                    window.uiShowToast("Gagal! Nomor WA belum terdaftar atau Password salah.");
+                } else {
+                    window.uiShowToast("Error Firebase: " + err.message); 
+                }
                 document.getElementById('btn-login').textContent = "Masuk Aplikasi"; 
             }
         });
 
+        // PERBAIKAN: Menampilkan Error Asli Firebase saat Daftar
         document.getElementById('form-register').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if(firebaseConfig.apiKey === 'dummy') { window.uiShowToast("Gagal Daftar: Koneksi Database Belum Diatur (Lihat Source Code)"); return; }
-            
             const name = document.getElementById('reg-name').value;
             const wa = document.getElementById('reg-wa').value;
             const area = `${document.getElementById('reg-kel').value}, Kec. ${document.getElementById('reg-kec').value}, ${document.getElementById('reg-kota').value}, ${document.getElementById('reg-prov').value}`;
@@ -560,10 +559,12 @@
                 });
                 window.uiShowToast(initRole === 'superadmin' ? "Akses Super Admin Aktif!" : "Pendaftaran Berhasil! Menunggu Approval Admin.");
             } catch(err) {
+                console.error("Register Error:", err);
                 if (err.code === 'auth/email-already-in-use') {
                     window.uiShowToast("Nomor WA ini sudah terdaftar! Silakan ke tab 'Masuk'.");
                 } else {
-                    window.uiShowToast("Gagal daftar: Pastikan koneksi internet stabil.");
+                    // SEKARANG ERROR ASLI DARI FIREBASE AKAN MUNCUL DI LAYAR
+                    window.uiShowToast("Error Sistem: " + err.message);
                 }
                 document.getElementById('btn-register').textContent = "Kirim Pendaftaran";
             }
@@ -585,6 +586,8 @@
                     window.uiShowToast("Mereset data login yang kadaluarsa...");
                     currentUser.delete().catch(()=>{}).finally(() => { auth.signOut().then(() => window.location.reload()); });
                 }
+            }, (error) => {
+                 window.uiShowToast("Gagal membaca profil: " + error.message);
             });
         }
 
