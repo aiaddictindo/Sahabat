@@ -61,8 +61,6 @@
             border-top: 1px solid rgba(128, 128, 128, 0.2); padding-bottom: env(safe-area-inset-bottom);
         }
 
-        #toast { transition: opacity 0.3s, transform 0.3s; transform: translateY(-20px); opacity: 0; pointer-events: none; }
-        #toast.show { transform: translateY(0); opacity: 1; }
         .animate-slide-up { animation: slideUp 0.3s ease-out forwards; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
     </style>
@@ -70,9 +68,12 @@
 <body>
     
     <div id="app-container">
-        <!-- Toast Notifikasi -->
-        <div id="toast" class="absolute top-5 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-2xl z-[100] text-sm font-bold flex items-center gap-2 border border-gray-700 w-11/12 text-center justify-center">
-            <i class="fa-solid fa-circle-info text-blue-400"></i> <span id="toast-msg">Notifikasi</span>
+        <!-- Toast Notifikasi (Diperbaiki agar pas di layar HP) -->
+        <div id="toast-wrapper" class="fixed top-4 left-0 right-0 flex justify-center z-[100] pointer-events-none px-4">
+            <div id="toast" class="bg-gray-900 text-white px-4 py-3 rounded-xl shadow-xl text-sm font-bold flex items-center gap-3 border border-gray-700 w-full max-w-sm transition-all duration-300 opacity-0 -translate-y-5">
+                <i class="fa-solid fa-circle-info text-blue-400 shrink-0 text-lg"></i>
+                <span id="toast-msg" class="leading-tight text-left flex-1 break-words">Notifikasi</span>
+            </div>
         </div>
 
         <!-- PENDING SCREEN -->
@@ -133,7 +134,9 @@
                         <div>
                             <label class="block text-[11px] font-bold mb-1 opacity-70 uppercase">Pilih Gereja</label>
                             <select id="reg-church" required class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-transparent focus:border-primary text-sm">
-                                <option value="">Memuat daftar gereja...</option>
+                                <option value="">Pilih Gereja Asal...</option>
+                                <option value="GPdI Cipondoh Makmur">GPdI Cipondoh Makmur</option>
+                                <option value="Gereja Lainnya">Gereja Lainnya...</option>
                             </select>
                         </div>
                         <div>
@@ -319,7 +322,6 @@
                     <div id="adm-view-global" class="hidden space-y-4">
                         <div class="p-4 rounded-xl border border-yellow-200 bg-yellow-50 dark:bg-yellow-900/10"><h4 class="font-bold text-sm mb-2">Renungan Global</h4><textarea id="adm-glob-verse" rows="2" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2"></textarea><input type="text" id="adm-glob-ref" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2"><button onclick="window.saveGlobalVerse()" class="bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg text-xs w-full">Update</button></div>
                         <div class="p-4 rounded-xl border border-red-200 bg-red-50 dark:bg-red-900/10"><h4 class="font-bold text-sm mb-2">Pengumuman Global</h4><input type="text" id="adm-glob-ann-title" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Judul"><textarea id="adm-glob-ann-desc" rows="2" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Isi..."></textarea><button onclick="window.saveGlobalAnn()" class="bg-red-600 text-white font-bold py-2 px-4 rounded-lg text-xs w-full">Siarkan</button></div>
-                        <div class="p-4 rounded-xl border border-green-200 bg-green-50 dark:bg-green-900/10"><h4 class="font-bold text-sm mb-2">Tambah Gereja Baru</h4><div class="flex gap-2"><input type="text" id="adm-glob-church" class="flex-1 p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs" placeholder="Nama Gereja"><button onclick="window.addGlobalChurch()" class="bg-green-600 text-white font-bold py-2 px-4 rounded-lg text-xs">Tambah</button></div></div>
                     </div>
                 </div>
             </div>
@@ -443,7 +445,20 @@
             else { m.classList.add('hidden'); m.classList.remove('flex'); }
         };
         
-        window.uiShowToast = (msg) => { document.getElementById('toast-msg').textContent = msg; const t = document.getElementById('toast'); t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 4000); };
+        // PERBAIKAN ANIMASI TOAST NOTIFIKASI
+        let toastTimeout;
+        window.uiShowToast = (msg) => { 
+            document.getElementById('toast-msg').textContent = msg; 
+            const t = document.getElementById('toast'); 
+            clearTimeout(toastTimeout);
+            t.classList.remove('opacity-0', '-translate-y-5'); 
+            t.classList.add('opacity-100', 'translate-y-0'); 
+            toastTimeout = setTimeout(() => { 
+                t.classList.add('opacity-0', '-translate-y-5'); 
+                t.classList.remove('opacity-100', 'translate-y-0'); 
+            }, 4000); 
+        };
+
         window.uiSetTheme = (t) => { document.documentElement.setAttribute('data-theme', t); localStorage.setItem('sk_theme', t); window.uiToggleModal('modal-theme'); };
         if(localStorage.getItem('sk_theme')) { document.documentElement.setAttribute('data-theme', localStorage.getItem('sk_theme')); }
         
@@ -455,12 +470,6 @@
             if(type === 'berbayar') { container.classList.remove('hidden'); document.getElementById(context + '-tariff').setAttribute('required', 'true'); } 
             else { container.classList.add('hidden'); document.getElementById(context + '-tariff').removeAttribute('required'); }
         };
-
-        setTimeout(() => {
-            if(document.getElementById('reg-church').options.length <= 1) {
-                document.getElementById('reg-church').innerHTML += '<option value="Gereja Default">Gereja Default (Offline Mode)</option>';
-            }
-        }, 3000);
     </script>
 
     <!-- === SCRIPT FIREBASE LOGIC === -->
@@ -469,33 +478,32 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, doc, getDoc, setDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "dummy", projectId: "dummy" };
+        // ======================================================================
+        // PERHATIAN: BAGIAN INI WAJIB DIGANTI JIKA DI-UPLOAD KE GITHUB PAGES
+        // ======================================================================
+        let firebaseConfig = {
+            apiKey: "dummy", 
+            projectId: "dummy",
+            authDomain: "dummy.firebaseapp.com"
+        };
         
-        // Proteksi Mode File Lokal
-        if (firebaseConfig.apiKey === "dummy" && window.location.protocol === "file:") {
-            setTimeout(() => { alert("PERHATIAN: Database dimatikan.\n\nSistem keamanan mendeteksi aplikasi ini dibuka langsung dari file (file:///) tanpa server.\n\nJika ingin fitur login dan data berfungsi normal, mohon gunakan aplikasi ini di halaman Preview sebelumnya, atau pasang di Web Hosting."); }, 1500);
+        // Peringatan jika masih menggunakan dummy config di Web Hosting
+        if (firebaseConfig.apiKey === "dummy" && window.location.protocol !== "file:") {
+            setTimeout(() => { 
+                window.uiShowToast("PERINGATAN: Anda belum memasukkan API Key Firebase Anda di dalam kode.");
+            }, 2000);
         }
 
         let app, auth, db;
         try { app = initializeApp(firebaseConfig); auth = getAuth(app); db = getFirestore(app); } catch(e) {}
         
-        const appId = 'sahabat-kristus-db-v4'; 
+        const appId = 'sahabat-kristus-db-v5'; 
 
         let currentUser = null; let userData = null;
         let allProfilesCache = []; let globalContentCache = null; let localContentCache = null;
 
-        const getEmailFromWa = (wa) => `${wa.replace(/\D/g, '')}@sk4.app`;
+        const getEmailFromWa = (wa) => `${wa.replace(/\D/g, '')}@sk5.app`;
         const getSafeChurchId = (name) => name.toLowerCase().replace(/[^a-z0-9]/g, '_');
-
-        const loadPublicChurches = async () => {
-            if(!auth || !db) return;
-            try {
-                if(!auth.currentUser) await signInAnonymously(auth);
-                const docSnap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'globals', 'church_list'));
-                let list = docSnap.exists() ? docSnap.data().churches : ['Gereja Pusat'];
-                document.getElementById('reg-church').innerHTML = '<option value="">Pilih Gereja Asal...</option>' + list.map(c => `<option value="${c}">${c}</option>`).join('');
-            } catch (e) {}
-        };
 
         if(auth) {
             onAuthStateChanged(auth, async (user) => {
@@ -507,14 +515,14 @@
                     document.getElementById('main-app').classList.add('hidden');
                     document.getElementById('pending-screen').classList.add('hidden');
                     document.getElementById('auth-screen').classList.remove('hidden');
-                    loadPublicChurches();
                 }
             });
         }
 
         document.getElementById('form-login').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if(firebaseConfig.apiKey === 'dummy') { window.uiShowToast("Mode Offline: Gagal terhubung ke Database"); return; }
+            if(firebaseConfig.apiKey === 'dummy') { window.uiShowToast("Gagal Login: Koneksi Database Belum Diatur (Lihat Source Code)"); return; }
+            
             const wa = document.getElementById('login-wa').value; const pass = document.getElementById('login-pass').value;
             try { 
                 document.getElementById('btn-login').textContent = "Memeriksa..."; 
@@ -527,7 +535,7 @@
 
         document.getElementById('form-register').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if(firebaseConfig.apiKey === 'dummy') { window.uiShowToast("Mode Offline: Gagal terhubung ke Database"); return; }
+            if(firebaseConfig.apiKey === 'dummy') { window.uiShowToast("Gagal Daftar: Koneksi Database Belum Diatur (Lihat Source Code)"); return; }
             
             const name = document.getElementById('reg-name').value;
             const wa = document.getElementById('reg-wa').value;
@@ -538,7 +546,11 @@
             try {
                 document.getElementById('btn-register').textContent = "Mendaftarkan...";
                 let initRole = 'user'; let initStatus = 'pending';
-                if(wa === '0000' && pass === 'admin.kristus') { initRole = 'superadmin'; initStatus = 'approved'; }
+                
+                // KODE KHUSUS SUPER ADMIN AI ADDICT INDO
+                if(wa === '1412' && pass === 'abc5Dasar') { 
+                    initRole = 'superadmin'; initStatus = 'approved'; 
+                }
 
                 const cred = await createUserWithEmailAndPassword(auth, getEmailFromWa(wa), pass);
                 await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', cred.user.uid), {
@@ -551,7 +563,7 @@
                 if (err.code === 'auth/email-already-in-use') {
                     window.uiShowToast("Nomor WA ini sudah terdaftar! Silakan ke tab 'Masuk'.");
                 } else {
-                    window.uiShowToast("Gagal daftar: Pastikan koneksi stabil.");
+                    window.uiShowToast("Gagal daftar: Pastikan koneksi internet stabil.");
                 }
                 document.getElementById('btn-register').textContent = "Kirim Pendaftaran";
             }
@@ -570,7 +582,6 @@
                         setupApprovedApp();
                     }
                 } else {
-                    // AUTO-FIX: Hapus akun yang nyangkut di memori (Auth) tapi tidak punya data profile (Database).
                     window.uiShowToast("Mereset data login yang kadaluarsa...");
                     currentUser.delete().catch(()=>{}).finally(() => { auth.signOut().then(() => window.location.reload()); });
                 }
@@ -660,13 +671,6 @@
             document.getElementById('adm-loc-sch-name').value = ''; document.getElementById('adm-loc-sch-time').value = ''; document.getElementById('adm-loc-sch-loc').value = ''; window.uiShowToast("Jadwal disimpan");
         };
         window.delLocSch = async (idx) => { let sch = localContentCache.schedules; sch.splice(idx, 1); await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'church_content', getSafeChurchId(userData.church)), { schedules: sch }, { merge: true }); };
-
-        window.addGlobalChurch = async () => {
-            const cname = document.getElementById('adm-glob-church').value; if(!cname) return;
-            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'globals', 'church_list'); const docSnap = await getDoc(docRef);
-            let list = docSnap.exists() ? docSnap.data().churches : ['Gereja Pusat']; if(!list.includes(cname)) list.push(cname);
-            await setDoc(docRef, { churches: list }); document.getElementById('adm-glob-church').value = ''; window.uiShowToast("Gereja Baru Ditambahkan");
-        };
 
         document.getElementById('form-offer-ride')?.addEventListener('submit', async (e) => { 
             e.preventDefault(); 
