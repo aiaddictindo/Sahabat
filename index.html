@@ -361,10 +361,16 @@
                 <form id="form-req-ride" class="space-y-4">
                     <div>
                         <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Jenis Kebutuhan</label>
-                        <select id="req-type" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-transparent text-sm focus:border-primary">
+                        <!-- Tambahan: onchange="window.toggleTariff('req')" -->
+                        <select id="req-type" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-transparent text-sm focus:border-primary" onchange="window.toggleTariff('req')">
                             <option value="gratis">Minta Tumpangan Gratis</option>
                             <option value="berbayar">Cari Jasa Antar (Bersedia Bayar)</option>
                         </select>
+                    </div>
+                    <!-- Tambahan: Input Nominal Bayaran (Otomatis muncul/hilang) -->
+                    <div id="req-tariff-container" class="hidden">
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase text-orange-500">Bersedia Bayar (Rp)</label>
+                        <input type="text" id="req-tariff" class="w-full p-3 rounded-xl border border-orange-300 bg-orange-50 dark:bg-orange-900/20 text-sm focus:border-orange-500" placeholder="Cth: Rp 15.000 / Sesuai Argo">
                     </div>
                     <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Tujuan</label><input type="text" id="req-dest" required class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-transparent text-sm"></div>
                     <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Titik Tunggu (Patokan)</label><input type="text" id="req-location" required class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-transparent text-sm"></div>
@@ -545,11 +551,6 @@
             try {
                 document.getElementById('btn-register').textContent = "Mendaftarkan...";
                 let initRole = 'user'; let initStatus = 'pending';
-                
-                // KODE KHUSUS SUPER ADMIN AI ADDICT INDO
-                if(wa === '1412' && pass === 'abc5Dasar') { 
-                    initRole = 'superadmin'; initStatus = 'approved'; 
-                }
 
                 const cred = await createUserWithEmailAndPassword(auth, getEmailFromWa(wa), pass);
                 await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', cred.user.uid), {
@@ -683,11 +684,23 @@
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', currentUser.uid), { points: (userData.points || 0) + 10 }); window.uiToggleModal('modal-offer-transport'); e.target.reset(); window.toggleTariff('offer'); window.uiShowToast("Kendaraan ditawarkan! (+10 Poin)"); 
         });
         
-        document.getElementById('form-req-ride')?.addEventListener('submit', async (e) => { 
+       document.getElementById('form-req-ride')?.addEventListener('submit', async (e) => { 
             e.preventDefault(); 
             const typeSvc = document.getElementById('req-type').value;
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'rides'), { type: 'request', svcType: typeSvc, passName: userData.name, passChurch: userData.church, passWa: userData.wa, passUid: currentUser.uid, dest: document.getElementById('req-dest').value, location: document.getElementById('req-location').value, people: parseInt(document.getElementById('req-people').value), status: 'active', createdAt: serverTimestamp() }); 
-            window.uiToggleModal('modal-req-transport'); e.target.reset(); window.uiShowToast("Permintaan jemputan dikirim!"); 
+            // Tambahan: Mengambil nilai nominal jika berbayar
+            const tariff = typeSvc === 'berbayar' ? document.getElementById('req-tariff').value : 'Gratis';
+            
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'rides'), { 
+                type: 'request', svcType: typeSvc, tariff: tariff, // Simpan ke database
+                passName: userData.name, passChurch: userData.church, passWa: userData.wa, passUid: currentUser.uid, 
+                dest: document.getElementById('req-dest').value, location: document.getElementById('req-location').value, 
+                people: parseInt(document.getElementById('req-people').value), status: 'active', createdAt: serverTimestamp() 
+            }); 
+            
+            window.uiToggleModal('modal-req-transport'); 
+            e.target.reset(); 
+            window.toggleTariff('req'); // Kembalikan form ke state awal
+            window.uiShowToast("Permintaan jemputan dikirim!"); 
         });
         
         function listenToRides() {
@@ -725,6 +738,9 @@
                                 <h4 class="font-bold text-sm">${r.passName} <span class="text-[9px] bg-gray-100 px-1 rounded">${r.passChurch}</span></h4>
                                 <p class="text-xs text-gray-700 mt-1">Ingin ke: <span class="font-bold">${r.dest}</span></p>
                                 <p class="text-[10px] text-red-500 font-medium mt-1"><i class="fa-solid fa-location-dot"></i> Tunggu di: ${r.location} (${r.people} Org)</p>
+                                <!-- Tambahan: Menampilkan Nominal Tarif di sini -->
+                                <p class="text-[10px] font-bold ${r.svcType === 'berbayar' ? 'text-orange-500' : 'text-green-500'} mt-1">Tawaran Harga: ${r.tariff || 'Gratis'}</p>
+                                
                                 <div class="flex gap-2 mt-3">
                                     <a href="${getWaLink(r.passWa, `Syalom ${r.passName}, saya ${userData?.name}. Saya bersedia jemput di ${r.location}.`)}" target="_blank" class="flex-1 bg-primary text-white text-[11px] font-bold py-2 rounded-lg text-center shadow-sm">Tawarkan Jemputan</a>
                                     ${(r.passUid === userData?.uid || userData?.role === 'superadmin') ? `<button onclick="window.deleteDocById('rides', '${r.id}')" class="bg-red-50 text-red-500 px-3 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : ''}
