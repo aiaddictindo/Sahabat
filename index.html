@@ -27,8 +27,7 @@
     <style>
         :root {
             --color-primary: #3b82f6; --color-secondary: #60a5fa;
-            --color-bg: #e5e7eb;
-            --color-surface: #ffffff; --color-text: #1f2937;
+            --color-bg: #e5e7eb; --color-surface: #ffffff; --color-text: #1f2937;
         }
         [data-theme="dark"] {
             --color-primary: #6366f1; --color-secondary: #818cf8;
@@ -68,7 +67,7 @@
 <body>
     
     <div id="app-container">
-        <!-- Toast Notifikasi (Diperbaiki agar pas di layar HP) -->
+        <!-- Toast Notifikasi -->
         <div id="toast-wrapper" class="fixed top-4 left-0 right-0 flex justify-center z-[100] pointer-events-none px-4">
             <div id="toast" class="bg-gray-900 text-white px-4 py-3 rounded-xl shadow-xl text-sm font-bold flex items-center gap-3 border border-gray-700 w-full max-w-sm transition-all duration-300 opacity-0 -translate-y-5">
                 <i class="fa-solid fa-circle-info text-blue-400 shrink-0 text-lg"></i>
@@ -84,7 +83,7 @@
             <button onclick="window.appLogout()" class="text-red-500 font-bold border border-red-500 px-6 py-2 rounded-lg hover:bg-red-50 transition">Keluar Akun</button>
         </div>
 
-        <!-- AUTH SCREEN (Login / Register) -->
+        <!-- AUTH SCREEN -->
         <div id="auth-screen" class="absolute inset-0 z-50 surface flex flex-col p-6 overflow-y-auto">
             <div class="w-full text-center py-6">
                 <i class="fa-solid fa-church text-5xl text-primary mb-3"></i>
@@ -97,7 +96,6 @@
                         <button id="tab-register" onclick="window.uiSwitchAuth('register')" class="flex-1 py-2 font-bold text-gray-400 border-b-2 border-transparent transition-all text-sm">Daftar Baru</button>
                     </div>
 
-                    <!-- Form Login -->
                     <form id="form-login" class="space-y-4">
                         <div>
                             <label class="block text-[11px] font-bold mb-1 opacity-70 uppercase">Nomor WhatsApp</label>
@@ -110,7 +108,6 @@
                         <button type="submit" id="btn-login" class="w-full bg-primary text-white font-bold py-3.5 rounded-xl mt-2 shadow-lg hover:opacity-90 active:scale-95 transition-all text-sm">Masuk Aplikasi</button>
                     </form>
 
-                    <!-- Form Register -->
                     <form id="form-register" class="space-y-4 hidden">
                         <div>
                             <label class="block text-[11px] font-bold mb-1 opacity-70 uppercase">Nama Lengkap</label>
@@ -127,15 +124,17 @@
                                 <input type="text" id="reg-prov" required class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent text-xs" placeholder="Provinsi">
                                 <input type="text" id="reg-kota" required class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent text-xs" placeholder="Kota/Kab">
                                 <input type="text" id="reg-kec" required class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent text-xs" placeholder="Kecamatan">
-                                <input type="text" id="reg-kel" required class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent text-xs" placeholder="Kelurahan/Desa">
+                                <input type="text" id="reg-kel" required class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent text-xs" placeholder="Kel/Desa">
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-[11px] font-bold mb-1 opacity-70 uppercase">Pilih Gereja</label>
-                            <select id="reg-church" required class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-transparent focus:border-primary text-sm">
+                            <select id="reg-church" required class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-transparent focus:border-primary text-sm font-bold">
                                 <option value="">Pilih Gereja Asal...</option>
-                                <option value="GPdI Cipondoh Makmur">GPdI Cipondoh Makmur</option>
+                                <option value="GPdI Cipondoh Makmur Tangerang">GPdI Cipondoh Makmur Tangerang</option>
+                                <option value="GBI Bukit Sion Mlaten Gempol">GBI Bukit Sion Mlaten Gempol</option>
+                                <option value="GPdI Jajag Banyuwangi">GPdI Jajag Banyuwangi</option>
                                 <option value="Gereja Lainnya">Gereja Lainnya...</option>
                             </select>
                         </div>
@@ -166,6 +165,8 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <button onclick="window.uiToggleModal('modal-theme')" class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 flex justify-center items-center hover:bg-gray-200 transition"><i class="fa-solid fa-palette text-sm opacity-70"></i></button>
+                    <!-- Tombol Profil dipindah ke Header -->
+                    <button onclick="window.uiNav('profil')" id="btn-nav-profil" class="w-8 h-8 rounded-full bg-primary text-white flex justify-center items-center hover:opacity-90 transition shadow-sm border-2 border-white dark:border-gray-700"><i class="fa-solid fa-user text-xs"></i></button>
                 </div>
             </header>
 
@@ -211,32 +212,83 @@
                         </div>
                     </div>
                     <div class="flex bg-gray-200/50 dark:bg-gray-800/50 rounded-xl p-1 relative">
-                        <button onclick="window.uiSwitchTransportTab('cari')" id="tab-cari" class="flex-1 py-2 text-sm font-bold rounded-lg bg-surface text-primary shadow-sm z-10 transition-all">Kendaraan Tersedia</button>
-                        <button onclick="window.uiSwitchTransportTab('beri')" id="tab-beri" class="flex-1 py-2 text-sm font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all">Butuh Jemputan</button>
+                        <button onclick="window.uiSwitchTab('transport', 'cari')" id="tab-transport-cari" class="flex-1 py-2 text-sm font-bold rounded-lg bg-surface text-primary shadow-sm z-10 transition-all">Kendaraan Tersedia</button>
+                        <button onclick="window.uiSwitchTab('transport', 'beri')" id="tab-transport-beri" class="flex-1 py-2 text-sm font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all">Butuh Jemputan</button>
                     </div>
                     
-                    <div id="view-cari-transport" class="space-y-4">
+                    <div id="view-transport-cari" class="space-y-4">
                         <button onclick="window.uiToggleModal('modal-offer-transport')" class="w-full bg-primary text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-md"><i class="fa-solid fa-plus-circle"></i> Tawarkan Kendaraan Anda</button>
                         <div id="list-available-rides" class="space-y-3 pb-4"></div>
                     </div>
                     
-                    <div id="view-beri-transport" class="hidden space-y-4">
+                    <div id="view-transport-beri" class="hidden space-y-4">
                         <button onclick="window.uiToggleModal('modal-req-transport')" class="w-full border-2 border-primary text-primary font-bold py-3.5 rounded-xl flex items-center justify-center gap-2"><i class="fa-solid fa-hand-sparkles"></i> Buat Permintaan Jemputan</button>
                         <div id="list-requested-rides" class="space-y-3 pb-4"></div>
                     </div>
                 </div>
 
-                <!-- PAGE: JASTIP -->
-                <div id="page-jastip" class="page-section hidden space-y-4">
-                    <div class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 p-4 rounded-xl flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-800 text-emerald-600 dark:text-emerald-300 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-bag-shopping"></i></div>
+                <!-- PAGE: ASUH / RAWAT -->
+                <div id="page-asuh" class="page-section hidden space-y-4">
+                    <div class="bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 p-4 rounded-xl flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-800 text-rose-600 dark:text-rose-300 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-hand-holding-heart"></i></div>
                         <div>
-                            <h2 class="font-bold text-sm">Jastip Kolektif</h2>
-                            <p class="text-[10px] opacity-70">Titip beli bareng, hemat ongkir.</p>
+                            <h2 class="font-bold text-sm leading-tight mb-1">Jasa Asuh & Rawat</h2>
+                            <p class="text-[10px] opacity-70 leading-snug">Saling bantu jaga lansia, anak, hewan peliharaan, atau rumah antar sesama jemaat.</p>
                         </div>
                     </div>
-                    <button onclick="window.uiToggleModal('modal-offer-jastip')" class="w-full bg-emerald-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-md hover:bg-emerald-600 transition"><i class="fa-solid fa-shop"></i> Buka Titipan / PO Baru</button>
-                    <div id="list-jastip" class="grid grid-cols-1 gap-4 pb-4"></div>
+                    <div class="flex bg-gray-200/50 dark:bg-gray-800/50 rounded-xl p-1 relative">
+                        <button onclick="window.uiSwitchTab('asuh', 'cari')" id="tab-asuh-cari" class="flex-1 py-2 text-sm font-bold rounded-lg bg-surface text-rose-500 shadow-sm z-10 transition-all">Relawan Tersedia</button>
+                        <button onclick="window.uiSwitchTab('asuh', 'beri')" id="tab-asuh-beri" class="flex-1 py-2 text-sm font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all">Butuh Bantuan</button>
+                    </div>
+                    
+                    <div id="view-asuh-cari" class="space-y-4">
+                        <button onclick="window.uiToggleModal('modal-offer-asuh')" class="w-full bg-rose-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-md hover:bg-rose-600 transition"><i class="fa-solid fa-heart-circle-plus"></i> Tawarkan Bantuan / Jasa</button>
+                        <div id="list-available-cares" class="space-y-3 pb-4"></div>
+                    </div>
+                    
+                    <div id="view-asuh-beri" class="hidden space-y-4">
+                        <button onclick="window.uiToggleModal('modal-req-asuh')" class="w-full border-2 border-rose-500 text-rose-500 font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 hover:bg-rose-50 dark:hover:bg-rose-900/10 transition"><i class="fa-solid fa-bell-concierge"></i> Buat Permintaan Bantuan</button>
+                        <div id="list-requested-cares" class="space-y-3 pb-4"></div>
+                    </div>
+                </div>
+
+                <!-- PAGE: USAHA (Jastip, Makanan, Jasa) -->
+                <div id="page-usaha" class="page-section hidden space-y-4">
+                    <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-4 rounded-xl flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-800 text-amber-600 dark:text-amber-300 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-store"></i></div>
+                        <div>
+                            <h2 class="font-bold text-sm leading-tight mb-1">Pasar Jemaat</h2>
+                            <p class="text-[10px] opacity-70 leading-snug">Dukung usaha sesama: Beli makanan, gunakan jasa profesi, atau ikut Jastip kolektif.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex bg-gray-200/50 dark:bg-gray-800/50 rounded-xl p-1 relative overflow-x-auto hide-scroll">
+                        <button onclick="window.uiSwitchTab('usaha', 'makanan')" id="tab-usaha-makanan" class="flex-1 min-w-[90px] py-2 text-xs font-bold rounded-lg bg-surface text-amber-600 shadow-sm z-10 transition-all">Makanan & PO</button>
+                        <button onclick="window.uiSwitchTab('usaha', 'jasa')" id="tab-usaha-jasa" class="flex-1 min-w-[90px] py-2 text-xs font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all">Jasa Profesi</button>
+                        <button onclick="window.uiSwitchTab('usaha', 'jastip')" id="tab-usaha-jastip" class="flex-1 min-w-[90px] py-2 text-xs font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all">Jastip</button>
+                    </div>
+
+                    <!-- Sub-view Makanan -->
+                    <div id="view-usaha-makanan" class="space-y-4">
+                        <button onclick="window.uiToggleModal('modal-add-food')" class="w-full bg-amber-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-md hover:bg-amber-600 transition"><i class="fa-solid fa-utensils"></i> Promosikan Makanan / Buka PO</button>
+                        <div id="list-foods" class="grid grid-cols-1 gap-4 pb-4"></div>
+                    </div>
+
+                    <!-- Sub-view Jasa Profesi -->
+                    <div id="view-usaha-jasa" class="hidden space-y-4">
+                        <button onclick="window.uiToggleModal('modal-add-service')" class="w-full bg-indigo-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-md hover:bg-indigo-600 transition"><i class="fa-solid fa-briefcase"></i> Tawarkan Jasa Keahlian</button>
+                        <div id="list-services" class="grid grid-cols-1 gap-4 pb-4"></div>
+                    </div>
+
+                    <!-- Sub-view Jastip (Dipindah ke sini) -->
+                    <div id="view-usaha-jastip" class="hidden space-y-4">
+                        <div class="bg-emerald-50 dark:bg-emerald-900/10 p-3 rounded-lg text-center mb-2 border border-emerald-100">
+                            <h3 class="text-xs font-bold text-emerald-700"><i class="fa-solid fa-bag-shopping"></i> Jastip Kolektif</h3>
+                            <p class="text-[10px] opacity-70">Titip beli bareng jemaat lain, hemat ongkir.</p>
+                        </div>
+                        <button onclick="window.uiToggleModal('modal-offer-jastip')" class="w-full border-2 border-emerald-500 text-emerald-600 font-bold py-3.5 rounded-xl flex items-center justify-center gap-2"><i class="fa-solid fa-shop"></i> Buka Titipan / PO Baru</button>
+                        <div id="list-jastip" class="grid grid-cols-1 gap-4 pb-4"></div>
+                    </div>
                 </div>
 
                 <!-- PAGE: ALKITAB -->
@@ -259,7 +311,7 @@
 
                 <!-- PAGE: PROFIL -->
                 <div id="page-profil" class="page-section hidden space-y-4 pb-4">
-                    <div class="surface p-6 rounded-2xl shadow-sm text-center border border-gray-200 dark:border-gray-800 relative overflow-hidden">
+                    <div class="surface p-6 rounded-2xl shadow-sm text-center border border-gray-200 dark:border-gray-800 relative overflow-hidden mt-2">
                         <div class="absolute top-0 left-0 w-full h-20 bg-gradient-to-r from-primary to-secondary opacity-20"></div>
                         <div class="relative w-24 h-24 bg-primary text-white rounded-full flex items-center justify-center text-4xl font-bold mx-auto mb-3 border-4 border-surface shadow-md"><span id="profile-initial">U</span></div>
                         <h2 id="profile-name" class="font-bold text-xl">Nama</h2>
@@ -275,26 +327,26 @@
                         <p id="profile-points" class="text-3xl font-black">0</p>
                         <p class="text-xs font-bold opacity-60 uppercase mt-1">Poin Pelayanan</p>
                     </div>
-                    <button onclick="window.appLogout()" class="w-full border-2 border-red-500/50 text-red-500 font-bold py-3.5 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/10 transition">Keluar Aplikasi</button>
+                    <button onclick="window.appLogout()" class="w-full border-2 border-red-500/50 text-red-500 font-bold py-3.5 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/10 transition">Keluar Akun</button>
                 </div>
             </main>
 
-            <!-- NAV BOTTOM -->
-            <nav class="absolute bottom-0 w-full h-[70px] glass-nav flex justify-around items-center px-2 z-50 rounded-b-lg">
-                <button onclick="window.uiNav('beranda')" class="nav-btn flex-1 flex flex-col items-center justify-center gap-1 text-primary transition">
-                    <i class="fa-solid fa-house text-xl mb-0.5"></i><span class="text-[10px] font-bold">Beranda</span>
+            <!-- NAV BOTTOM (Diperbarui menjadi 5 Menu) -->
+            <nav class="absolute bottom-0 w-full h-[70px] glass-nav flex justify-around items-center px-1 z-50 rounded-b-lg">
+                <button onclick="window.uiNav('beranda')" class="nav-btn active-nav flex-1 flex flex-col items-center justify-center gap-1 text-primary transition">
+                    <i class="fa-solid fa-house text-xl mb-0.5"></i><span class="text-[9px] font-bold">Beranda</span>
                 </button>
                 <button onclick="window.uiNav('transport')" class="nav-btn flex-1 flex flex-col items-center justify-center gap-1 text-gray-400 transition">
-                    <i class="fa-solid fa-car text-xl mb-0.5"></i><span class="text-[10px] font-bold">Transport</span>
+                    <i class="fa-solid fa-car text-xl mb-0.5"></i><span class="text-[9px] font-bold">Transport</span>
                 </button>
-                <button onclick="window.uiNav('jastip')" class="nav-btn flex-1 flex flex-col items-center justify-center gap-1 text-gray-400 transition">
-                    <i class="fa-solid fa-shop text-xl mb-0.5"></i><span class="text-[10px] font-bold">Jastip</span>
+                <button onclick="window.uiNav('asuh')" class="nav-btn flex-1 flex flex-col items-center justify-center gap-1 text-gray-400 transition">
+                    <i class="fa-solid fa-hand-holding-heart text-xl mb-0.5"></i><span class="text-[9px] font-bold">Asuh</span>
+                </button>
+                <button onclick="window.uiNav('usaha')" class="nav-btn flex-1 flex flex-col items-center justify-center gap-1 text-gray-400 transition">
+                    <i class="fa-solid fa-store text-xl mb-0.5"></i><span class="text-[9px] font-bold">Usaha</span>
                 </button>
                 <button onclick="window.uiNav('alkitab')" class="nav-btn flex-1 flex flex-col items-center justify-center gap-1 text-gray-400 transition">
-                    <i class="fa-solid fa-book-bible text-xl mb-0.5"></i><span class="text-[10px] font-bold">Alkitab</span>
-                </button>
-                <button onclick="window.uiNav('profil')" class="nav-btn flex-1 flex flex-col items-center justify-center gap-1 text-gray-400 transition">
-                    <i class="fa-solid fa-circle-user text-xl mb-0.5"></i><span class="text-[10px] font-bold">Profil</span>
+                    <i class="fa-solid fa-book-bible text-xl mb-0.5"></i><span class="text-[9px] font-bold">Alkitab</span>
                 </button>
             </nav>
         </div>
@@ -309,17 +361,17 @@
                     <button onclick="window.uiToggleModal('modal-admin')" class="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full text-gray-500"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div class="flex gap-2 overflow-x-auto pb-2 border-b border-gray-200 dark:border-gray-700 mb-4 shrink-0">
-                    <button onclick="window.uiSwitchAdminTab('users')" id="tab-adm-users" class="px-3 py-1.5 text-[11px] font-bold bg-primary text-white rounded-lg whitespace-nowrap">Anggota Pending</button>
-                    <button onclick="window.uiSwitchAdminTab('local')" id="tab-adm-local" class="px-3 py-1.5 text-[11px] font-bold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg whitespace-nowrap">Gereja Lokal</button>
-                    <button onclick="window.uiSwitchAdminTab('global')" id="tab-adm-global" class="hidden px-3 py-1.5 text-[11px] font-bold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg whitespace-nowrap">Global</button>
+                    <button onclick="window.uiSwitchTab('adm', 'users')" id="tab-adm-users" class="px-3 py-1.5 text-[11px] font-bold bg-primary text-white rounded-lg whitespace-nowrap transition-colors">Anggota Pending</button>
+                    <button onclick="window.uiSwitchTab('adm', 'local')" id="tab-adm-local" class="px-3 py-1.5 text-[11px] font-bold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg whitespace-nowrap transition-colors">Gereja Lokal</button>
+                    <button onclick="window.uiSwitchTab('adm', 'global')" id="tab-adm-global" class="hidden px-3 py-1.5 text-[11px] font-bold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg whitespace-nowrap transition-colors">Global</button>
                 </div>
                 <div class="flex-1 overflow-y-auto pb-6">
-                    <div id="adm-view-users" class="space-y-3"><p class="text-[11px] opacity-70 mb-2">Daftar anggota yang menunggu disetujui.</p><div id="admin-pending-users-list" class="space-y-3"></div></div>
-                    <div id="adm-view-local" class="hidden space-y-4">
+                    <div id="view-adm-users" class="space-y-3"><p class="text-[11px] opacity-70 mb-2">Daftar anggota yang menunggu disetujui.</p><div id="admin-pending-users-list" class="space-y-3"></div></div>
+                    <div id="view-adm-local" class="hidden space-y-4">
                         <div class="p-4 rounded-xl border border-blue-200 bg-blue-50 dark:bg-blue-900/10"><h4 class="font-bold text-sm mb-2">Pengumuman Lokal</h4><input type="text" id="adm-loc-ann-title" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Judul"><textarea id="adm-loc-ann-desc" rows="2" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Isi..."></textarea><button onclick="window.saveLocalAnn()" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg text-xs w-full">Kirim</button></div>
-                        <div class="p-4 rounded-xl border border-purple-200 bg-purple-50 dark:bg-purple-900/10"><h4 class="font-bold text-sm mb-2">Jadwal Lokal</h4><input type="text" id="adm-loc-sch-name" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Nama Ibadah"><input type="text" id="adm-loc-sch-time" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Waktu (Minggu, 07:00)"><input type="text" id="adm-loc-sch-loc" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Lokasi (Gedung Utama)"><button onclick="window.saveLocalSchedule()" class="bg-purple-600 text-white font-bold py-2 px-4 rounded-lg text-xs w-full">Simpan</button></div>
+                        <div class="p-4 rounded-xl border border-purple-200 bg-purple-50 dark:bg-purple-900/10"><h4 class="font-bold text-sm mb-2">Jadwal Lokal</h4><input type="text" id="adm-loc-sch-name" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Nama Ibadah"><input type="text" id="adm-loc-sch-time" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Waktu (Minggu, 07:00)"><input type="text" id="adm-loc-sch-loc" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Lokasi (Gedung)"><button onclick="window.saveLocalSchedule()" class="bg-purple-600 text-white font-bold py-2 px-4 rounded-lg text-xs w-full">Simpan</button></div>
                     </div>
-                    <div id="adm-view-global" class="hidden space-y-4">
+                    <div id="view-adm-global" class="hidden space-y-4">
                         <div class="p-4 rounded-xl border border-yellow-200 bg-yellow-50 dark:bg-yellow-900/10"><h4 class="font-bold text-sm mb-2">Renungan Global</h4><textarea id="adm-glob-verse" rows="2" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2"></textarea><input type="text" id="adm-glob-ref" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2"><button onclick="window.saveGlobalVerse()" class="bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg text-xs w-full">Update</button></div>
                         <div class="p-4 rounded-xl border border-red-200 bg-red-50 dark:bg-red-900/10"><h4 class="font-bold text-sm mb-2">Pengumuman Global</h4><input type="text" id="adm-glob-ann-title" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Judul"><textarea id="adm-glob-ann-desc" rows="2" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Isi..."></textarea><button onclick="window.saveGlobalAnn()" class="bg-red-600 text-white font-bold py-2 px-4 rounded-lg text-xs w-full">Siarkan</button></div>
                     </div>
@@ -330,7 +382,7 @@
         <!-- Modal Transport Offer -->
         <div id="modal-offer-transport" class="absolute inset-0 bg-black/60 z-[70] hidden flex-col justify-end backdrop-blur-sm">
             <div class="surface rounded-t-3xl p-6 w-full animate-slide-up h-[85vh] overflow-y-auto">
-                <div class="flex justify-between items-center mb-5"><h3 class="font-bold text-lg"><i class="fa-solid fa-car-side text-primary mr-2"></i>Tawarkan Tumpangan/Jasa</h3><button onclick="window.uiToggleModal('modal-offer-transport')" class="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full"><i class="fa-solid fa-xmark"></i></button></div>
+                <div class="flex justify-between items-center mb-5"><h3 class="font-bold text-lg"><i class="fa-solid fa-car-side text-primary mr-2"></i>Tawarkan Kendaraan</h3><button onclick="window.uiToggleModal('modal-offer-transport')" class="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full"><i class="fa-solid fa-xmark"></i></button></div>
                 <form id="form-offer-ride" class="space-y-4">
                     <div>
                         <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Jenis Layanan</label>
@@ -343,11 +395,11 @@
                         <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase text-orange-500">Tarif / Biaya</label>
                         <input type="text" id="offer-tariff" class="w-full p-3 rounded-xl border border-orange-300 bg-orange-50 dark:bg-orange-900/20 text-sm focus:border-orange-500" placeholder="Cth: Rp 15.000 / Kesepakatan">
                     </div>
-                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Tujuan Akhir</label><input type="text" id="offer-dest" required class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-transparent text-sm"></div>
-                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Rute yang dilewati</label><input type="text" id="offer-route" required class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-transparent text-sm"></div>
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Tujuan Akhir</label><input type="text" id="offer-dest" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm"></div>
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Rute yang dilewati</label><input type="text" id="offer-route" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm"></div>
                     <div class="grid grid-cols-2 gap-3">
-                        <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Sisa Kursi</label><input type="number" id="offer-seats" required min="1" max="6" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-transparent text-center text-sm"></div>
-                        <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Jam Jalan</label><input type="time" id="offer-time" required class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-transparent text-sm"></div>
+                        <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Sisa Kursi</label><input type="number" id="offer-seats" required min="1" max="6" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-center text-sm"></div>
+                        <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Jam Jalan</label><input type="time" id="offer-time" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm"></div>
                     </div>
                     <button type="submit" class="w-full bg-primary text-white font-bold py-3.5 rounded-xl shadow-lg mt-2 text-sm">Posting Kendaraan (+10 Poin)</button>
                 </form>
@@ -361,21 +413,120 @@
                 <form id="form-req-ride" class="space-y-4">
                     <div>
                         <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Jenis Kebutuhan</label>
-                        <!-- Tambahan: onchange="window.toggleTariff('req')" -->
-                        <select id="req-type" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-transparent text-sm focus:border-primary" onchange="window.toggleTariff('req')">
+                        <select id="req-type" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm focus:border-primary" onchange="window.toggleTariff('req')">
                             <option value="gratis">Minta Tumpangan Gratis</option>
                             <option value="berbayar">Cari Jasa Antar (Bersedia Bayar)</option>
                         </select>
                     </div>
-                    <!-- Tambahan: Input Nominal Bayaran (Otomatis muncul/hilang) -->
                     <div id="req-tariff-container" class="hidden">
                         <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase text-orange-500">Bersedia Bayar (Rp)</label>
                         <input type="text" id="req-tariff" class="w-full p-3 rounded-xl border border-orange-300 bg-orange-50 dark:bg-orange-900/20 text-sm focus:border-orange-500" placeholder="Cth: Rp 15.000 / Sesuai Argo">
                     </div>
-                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Tujuan</label><input type="text" id="req-dest" required class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-transparent text-sm"></div>
-                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Titik Tunggu (Patokan)</label><input type="text" id="req-location" required class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-transparent text-sm"></div>
-                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Jumlah Orang</label><input type="number" id="req-people" required min="1" max="4" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-transparent text-sm" value="1"></div>
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Tujuan</label><input type="text" id="req-dest" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm"></div>
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Titik Tunggu (Patokan)</label><input type="text" id="req-location" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm"></div>
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Jumlah Orang</label><input type="number" id="req-people" required min="1" max="4" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" value="1"></div>
                     <button type="submit" class="w-full border-2 border-primary text-primary font-bold py-3.5 rounded-xl mt-2 text-sm">Kirim Permintaan</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal Asuh Offer -->
+        <div id="modal-offer-asuh" class="absolute inset-0 bg-black/60 z-[70] hidden flex-col justify-end backdrop-blur-sm">
+            <div class="surface rounded-t-3xl p-6 w-full animate-slide-up h-[85vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-5"><h3 class="font-bold text-lg"><i class="fa-solid fa-heart-circle-plus text-rose-500 mr-2"></i>Tawarkan Jasa Asuh</h3><button onclick="window.uiToggleModal('modal-offer-asuh')" class="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full"><i class="fa-solid fa-xmark"></i></button></div>
+                <form id="form-offer-asuh" class="space-y-4">
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Kategori Asuhan</label>
+                        <select id="o-asuh-cat" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm focus:border-rose-500">
+                            <option value="Lansia">Menjaga Lansia / Orang Tua</option>
+                            <option value="Anak">Menjaga Anak (Babysitting)</option>
+                            <option value="Orang Sakit">Menjaga Orang Sakit</option>
+                            <option value="Hewan">Merawat Hewan Peliharaan</option>
+                            <option value="Rumah">Menjaga Rumah / Tanaman</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Tipe Jasa</label>
+                        <select id="o-asuh-type" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm focus:border-rose-500" onchange="window.toggleTariffAsuh('offer')">
+                            <option value="sukarela">Relawan / Sukarela (Gratis)</option>
+                            <option value="berbayar">Jasa Profesional (Berbayar)</option>
+                        </select>
+                    </div>
+                    <div id="o-asuh-tariff-container" class="hidden">
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase text-orange-500">Tarif / Honor</label>
+                        <input type="text" id="o-asuh-tariff" class="w-full p-3 rounded-xl border border-orange-300 bg-orange-50 dark:bg-orange-900/20 text-sm focus:border-orange-500" placeholder="Cth: Rp 50.000/hari">
+                    </div>
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Ketersediaan Waktu / Jadwal</label><input type="text" id="o-asuh-time" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Cth: Sabtu-Minggu, atau Malam Hari"></div>
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Keterangan / Pengalaman</label><textarea id="o-asuh-desc" required rows="2" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Ceritakan sedikit pengalaman Anda..."></textarea></div>
+                    <button type="submit" class="w-full bg-rose-500 text-white font-bold py-3.5 rounded-xl shadow-lg mt-2 text-sm">Posting Jasa (+15 Poin)</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal Asuh Request -->
+        <div id="modal-req-asuh" class="absolute inset-0 bg-black/60 z-[70] hidden flex-col justify-end backdrop-blur-sm">
+            <div class="surface rounded-t-3xl p-6 w-full animate-slide-up h-[85vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-5"><h3 class="font-bold text-lg"><i class="fa-solid fa-bell-concierge text-rose-500 mr-2"></i>Minta Bantuan Rawat</h3><button onclick="window.uiToggleModal('modal-req-asuh')" class="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full"><i class="fa-solid fa-xmark"></i></button></div>
+                <form id="form-req-asuh" class="space-y-4">
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Kategori Kebutuhan</label>
+                        <select id="r-asuh-cat" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm focus:border-rose-500">
+                            <option value="Lansia">Butuh teman jaga Lansia</option>
+                            <option value="Anak">Butuh jaga Anak sebentar</option>
+                            <option value="Orang Sakit">Butuh teman jaga Orang Sakit</option>
+                            <option value="Hewan">Titip Hewan Peliharaan</option>
+                            <option value="Rumah">Titip Siram Tanaman/Rumah</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Jenis Imbalan</label>
+                        <select id="r-asuh-type" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm focus:border-rose-500" onchange="window.toggleTariffAsuh('req')">
+                            <option value="sukarela">Mohon Bantuan Sukarela</option>
+                            <option value="berbayar">Sedia Dana / Honor</option>
+                        </select>
+                    </div>
+                    <div id="r-asuh-tariff-container" class="hidden">
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase text-orange-500">Anggaran Honor (Rp)</label>
+                        <input type="text" id="r-asuh-tariff" class="w-full p-3 rounded-xl border border-orange-300 bg-orange-50 dark:bg-orange-900/20 text-sm focus:border-orange-500" placeholder="Cth: Tersedia honor Rp 100.000">
+                    </div>
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Kapan Dibutuhkan?</label><input type="text" id="r-asuh-time" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Cth: Besok pagi jam 08:00 - 12:00"></div>
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Detail Kebutuhan (Lokasi/Kondisi)</label><textarea id="r-asuh-desc" required rows="2" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Mohon jelaskan secara rinci..."></textarea></div>
+                    <button type="submit" class="w-full border-2 border-rose-500 text-rose-500 font-bold py-3.5 rounded-xl mt-2 text-sm">Kirim Permintaan Bantuan</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal Tambah Makanan -->
+        <div id="modal-add-food" class="absolute inset-0 bg-black/60 z-[70] hidden flex-col justify-end backdrop-blur-sm">
+            <div class="surface rounded-t-3xl p-6 w-full animate-slide-up h-[85vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-5"><h3 class="font-bold text-lg"><i class="fa-solid fa-utensils text-amber-500 mr-2"></i>Jual Makanan / PO</h3><button onclick="window.uiToggleModal('modal-add-food')" class="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full"><i class="fa-solid fa-xmark"></i></button></div>
+                <form id="form-add-food" class="space-y-4">
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Nama Makanan / Produk</label><input type="text" id="food-name" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Cth: Pepes Tahu Ayam"></div>
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase text-emerald-600">Harga (Rp)</label><input type="text" id="food-price" required class="w-full p-3 rounded-xl border border-emerald-300 bg-emerald-50 dark:bg-emerald-900/20 text-sm" placeholder="Cth: Rp 15.000 / porsi"></div>
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Sistem Penjualan</label>
+                        <select id="food-system" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm">
+                            <option value="po">Pre-Order (PO)</option>
+                            <option value="ready">Ready Stock (Tersedia Tiap Hari)</option>
+                        </select>
+                    </div>
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Batas Waktu PO / Jadwal Pengiriman</label><input type="text" id="food-time" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Cth: PO tutup Kamis, Kirim Sabtu"></div>
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Deskripsi & Cara Pengambilan</label><textarea id="food-desc" required rows="2" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Jelaskan isi makanan dan lokasi ambil..."></textarea></div>
+                    <button type="submit" class="w-full bg-amber-500 text-white font-bold py-3.5 rounded-xl shadow-lg mt-2 text-sm">Promosikan Makanan (+10 Poin)</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal Tambah Jasa Profesi -->
+        <div id="modal-add-service" class="absolute inset-0 bg-black/60 z-[70] hidden flex-col justify-end backdrop-blur-sm">
+            <div class="surface rounded-t-3xl p-6 w-full animate-slide-up h-[85vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-5"><h3 class="font-bold text-lg"><i class="fa-solid fa-briefcase text-indigo-500 mr-2"></i>Tawarkan Jasa Keahlian</h3><button onclick="window.uiToggleModal('modal-add-service')" class="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full"><i class="fa-solid fa-xmark"></i></button></div>
+                <form id="form-add-service" class="space-y-4">
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Bidang Keahlian / Jasa</label><input type="text" id="svc-name" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Cth: Service AC, Les Inggris, Desain Logo"></div>
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Estimasi Biaya / Tarif</label><input type="text" id="svc-price" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Cth: Mulai Rp 50rb atau Sesuai Kesepakatan"></div>
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Deskripsi Layanan & Pengalaman</label><textarea id="svc-desc" required rows="3" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Jelaskan detail jasa yang Anda tawarkan..."></textarea></div>
+                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Link Portofolio / Instagram (Opsional)</label><input type="url" id="svc-link" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="https://..."></div>
+                    <button type="submit" class="w-full bg-indigo-500 text-white font-bold py-3.5 rounded-xl shadow-lg mt-2 text-sm">Posting Jasa (+10 Poin)</button>
                 </form>
             </div>
         </div>
@@ -405,9 +556,27 @@
 
     <!-- === SCRIPT UI === -->
     <script>
+        // Modified uiNav to handle Profile being outside bottom nav
         window.uiNav = function(pageId) {
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.replace('text-primary', 'text-gray-400'));
-            event.currentTarget.classList.replace('text-gray-400', 'text-primary');
+            // Reset bottom nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-primary');
+                btn.classList.add('text-gray-400');
+                btn.classList.remove('active-nav');
+            });
+            
+            // Highlight active nav if it exists in bottom nav
+            const activeBtn = document.querySelector(`.nav-btn[onclick="window.uiNav('${pageId}')"]`);
+            if(activeBtn) {
+                activeBtn.classList.remove('text-gray-400');
+                activeBtn.classList.add('text-primary', 'active-nav');
+            }
+
+            // Highlight Profile button in header if selected
+            const profileBtn = document.getElementById('btn-nav-profil');
+            if(pageId === 'profil') profileBtn.classList.add('ring-2', 'ring-blue-400');
+            else profileBtn.classList.remove('ring-2', 'ring-blue-400');
+
             document.querySelectorAll('.page-section').forEach(p => p.classList.add('hidden'));
             document.getElementById('page-' + pageId).classList.remove('hidden');
         };
@@ -425,24 +594,25 @@
             }
         };
 
-        window.uiSwitchTransportTab = function(tab) {
-            const c = document.getElementById('tab-cari'), b = document.getElementById('tab-beri');
-            if(tab === 'cari') { 
-                c.className = "flex-1 py-2 text-sm font-bold rounded-lg bg-surface text-primary shadow-sm z-10 transition-all"; 
-                b.className = "flex-1 py-2 text-sm font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all"; 
-                document.getElementById('view-cari-transport').classList.remove('hidden'); document.getElementById('view-beri-transport').classList.add('hidden'); 
-            } else { 
-                b.className = "flex-1 py-2 text-sm font-bold rounded-lg bg-surface text-primary shadow-sm z-10 transition-all"; 
-                c.className = "flex-1 py-2 text-sm font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all"; 
-                document.getElementById('view-cari-transport').classList.add('hidden'); document.getElementById('view-beri-transport').classList.remove('hidden'); 
-            }
-        };
+        // Universal Tab Switcher for internal pages (Transport, Asuh, Usaha, Admin)
+        window.uiSwitchTab = function(context, tabName) {
+            // 1. Reset all buttons in this context
+            document.querySelectorAll(`button[id^="tab-${context}-"]`).forEach(b => { 
+                b.className = "flex-1 min-w-[90px] py-2 text-xs font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all"; // default inactive state
+                if(context === 'adm') b.className = "px-3 py-1.5 text-[11px] font-bold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg whitespace-nowrap transition-colors";
+            });
+            // 2. Hide all views in this context
+            document.querySelectorAll(`div[id^="view-${context}-"]`).forEach(v => v.classList.add('hidden'));
+            
+            // 3. Activate selected button
+            const activeBtn = document.getElementById(`tab-${context}-${tabName}`);
+            if(context === 'transport') activeBtn.className = "flex-1 min-w-[90px] py-2 text-sm font-bold rounded-lg bg-surface text-primary shadow-sm z-10 transition-all";
+            else if(context === 'asuh') activeBtn.className = "flex-1 min-w-[90px] py-2 text-sm font-bold rounded-lg bg-surface text-rose-500 shadow-sm z-10 transition-all";
+            else if(context === 'usaha') activeBtn.className = "flex-1 min-w-[90px] py-2 text-xs font-bold rounded-lg bg-surface text-amber-600 shadow-sm z-10 transition-all";
+            else if(context === 'adm') activeBtn.className = "px-3 py-1.5 text-[11px] font-bold bg-primary text-white rounded-lg whitespace-nowrap transition-colors";
 
-        window.uiSwitchAdminTab = function(tab) {
-            document.querySelectorAll('#modal-admin button[id^="tab-adm-"]').forEach(b => { b.classList.replace('bg-primary', 'bg-gray-100'); b.classList.replace('text-white', 'text-gray-600'); });
-            event.currentTarget.classList.replace('bg-gray-100', 'bg-primary'); event.currentTarget.classList.replace('text-gray-600', 'text-white');
-            document.getElementById('adm-view-users').classList.add('hidden'); document.getElementById('adm-view-local').classList.add('hidden'); document.getElementById('adm-view-global').classList.add('hidden');
-            document.getElementById('adm-view-' + tab).classList.remove('hidden');
+            // 4. Show selected view
+            document.getElementById(`view-${context}-${tabName}`).classList.remove('hidden');
         };
 
         window.uiToggleModal = (id) => { 
@@ -451,17 +621,14 @@
             else { m.classList.add('hidden'); m.classList.remove('flex'); }
         };
         
-        // PERBAIKAN ANIMASI TOAST NOTIFIKASI
         let toastTimeout;
         window.uiShowToast = (msg) => { 
             document.getElementById('toast-msg').textContent = msg; 
             const t = document.getElementById('toast'); 
             clearTimeout(toastTimeout);
-            t.classList.remove('opacity-0', '-translate-y-5'); 
-            t.classList.add('opacity-100', 'translate-y-0'); 
+            t.classList.remove('opacity-0', '-translate-y-5'); t.classList.add('opacity-100', 'translate-y-0'); 
             toastTimeout = setTimeout(() => { 
-                t.classList.add('opacity-0', '-translate-y-5'); 
-                t.classList.remove('opacity-100', 'translate-y-0'); 
+                t.classList.add('opacity-0', '-translate-y-5'); t.classList.remove('opacity-100', 'translate-y-0'); 
             }, 4000); 
         };
 
@@ -476,13 +643,21 @@
             if(type === 'berbayar') { container.classList.remove('hidden'); document.getElementById(context + '-tariff').setAttribute('required', 'true'); } 
             else { container.classList.add('hidden'); document.getElementById(context + '-tariff').removeAttribute('required'); }
         };
+
+        window.toggleTariffAsuh = (context) => {
+            const prefix = context === 'offer' ? 'o-asuh' : 'r-asuh';
+            const type = document.getElementById(prefix + '-type').value;
+            const container = document.getElementById(prefix + '-tariff-container');
+            if(type === 'berbayar') { container.classList.remove('hidden'); document.getElementById(prefix + '-tariff').setAttribute('required', 'true'); } 
+            else { container.classList.add('hidden'); document.getElementById(prefix + '-tariff').removeAttribute('required'); }
+        };
     </script>
 
     <!-- === SCRIPT FIREBASE LOGIC === -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, getDoc, setDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         let firebaseConfig = {
             apiKey: "AIzaSyA8g0YxIzirNm8u3T1QKredTZFxg7FKMZs", 
@@ -521,7 +696,6 @@
             });
         }
 
-        // PERBAIKAN: Menampilkan Error Asli Firebase saat Login
         document.getElementById('form-login').addEventListener('submit', async (e) => {
             e.preventDefault();
             const wa = document.getElementById('login-wa').value; const pass = document.getElementById('login-pass').value;
@@ -529,17 +703,13 @@
                 document.getElementById('btn-login').textContent = "Memeriksa..."; 
                 await signInWithEmailAndPassword(auth, getEmailFromWa(wa), pass); 
             } catch(err) { 
-                console.error("Login Error:", err);
                 if(err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
                     window.uiShowToast("Gagal! Nomor WA belum terdaftar atau Password salah.");
-                } else {
-                    window.uiShowToast("Error Firebase: " + err.message); 
-                }
+                } else { window.uiShowToast("Error: " + err.message); }
                 document.getElementById('btn-login').textContent = "Masuk Aplikasi"; 
             }
         });
 
-        // PERBAIKAN: Menampilkan Error Asli Firebase saat Daftar
         document.getElementById('form-register').addEventListener('submit', async (e) => {
             e.preventDefault();
             const name = document.getElementById('reg-name').value;
@@ -558,15 +728,10 @@
                     prov: document.getElementById('reg-prov').value, kota: document.getElementById('reg-kota').value,
                     kec: document.getElementById('reg-kec').value, kel: document.getElementById('reg-kel').value, createdAt: serverTimestamp()
                 });
-                window.uiShowToast(initRole === 'superadmin' ? "Akses Super Admin Aktif!" : "Pendaftaran Berhasil! Menunggu Approval Admin.");
+                window.uiShowToast("Pendaftaran Berhasil! Menunggu Approval Admin.");
             } catch(err) {
-                console.error("Register Error:", err);
-                if (err.code === 'auth/email-already-in-use') {
-                    window.uiShowToast("Nomor WA ini sudah terdaftar! Silakan ke tab 'Masuk'.");
-                } else {
-                    // SEKARANG ERROR ASLI DARI FIREBASE AKAN MUNCUL DI LAYAR
-                    window.uiShowToast("Error Sistem: " + err.message);
-                }
+                if (err.code === 'auth/email-already-in-use') window.uiShowToast("Nomor WA ini sudah terdaftar! Silakan ke tab 'Masuk'.");
+                else window.uiShowToast("Error: " + err.message);
                 document.getElementById('btn-register').textContent = "Kirim Pendaftaran";
             }
         });
@@ -587,9 +752,7 @@
                     window.uiShowToast("Mereset data login yang kadaluarsa...");
                     currentUser.delete().catch(()=>{}).finally(() => { auth.signOut().then(() => window.location.reload()); });
                 }
-            }, (error) => {
-                 window.uiShowToast("Gagal membaca profil: " + error.message);
-            });
+            }, (error) => { window.uiShowToast("Gagal membaca profil: " + error.message); });
         }
 
         function setupApprovedApp() {
@@ -609,7 +772,13 @@
                 listenToAllProfilesForAdmin();
             }
 
-            listenToGlobals(); listenToLocalChurch(userData.church); listenToRides(); listenToJastip();
+            // Initialize all real-time listeners for content
+            listenToGlobals(); 
+            listenToLocalChurch(userData.church); 
+            listenToRides(); 
+            listenToJastip();
+            listenToCares(); // New Feature
+            listenToBusinesses(); // New Feature
         }
 
         function listenToGlobals() {
@@ -620,7 +789,7 @@
                 
                 const c = document.getElementById('beranda-global-announcements');
                 if(!data.announcements || data.announcements.length === 0) c.innerHTML = '<p class="text-[11px] opacity-50 p-2 text-center bg-gray-50 rounded-lg">Belum ada info global.</p>';
-                else c.innerHTML = data.announcements.map((a,i) => `<div class="surface p-4 rounded-xl border border-blue-200 bg-blue-50 relative"><h4 class="font-bold text-sm text-blue-800 mb-1">${a.title}</h4><p class="text-[11px] opacity-80 leading-relaxed">${a.desc}</p>${userData.role === 'superadmin' ? `<button onclick="window.delGlobAnn(${i})" class="absolute top-2 right-2 text-red-500 bg-white rounded-full w-6 h-6 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>` : ''}</div>`).join('');
+                else c.innerHTML = data.announcements.map((a,i) => `<div class="surface p-4 rounded-xl border border-blue-200 bg-blue-50 relative"><h4 class="font-bold text-sm text-blue-800 mb-1">${a.title}</h4><p class="text-[11px] opacity-80 leading-relaxed">${a.desc}</p>${userData.role === 'superadmin' ? `<button onclick="window.delGlobAnn(${i})" class="absolute top-2 right-2 text-red-500 bg-white rounded-full w-6 h-6 flex items-center justify-center shadow-sm"><i class="fa-solid fa-xmark"></i></button>` : ''}</div>`).join('');
                 if(userData.role==='superadmin') { document.getElementById('adm-glob-verse').value = data.verse || ''; document.getElementById('adm-glob-ref').value = data.ref || ''; }
             });
         }
@@ -630,13 +799,14 @@
                 let data = docSnap.exists() ? docSnap.data() : { announcements: [], schedules: [] }; localContentCache = data;
                 const ac = document.getElementById('beranda-local-announcements');
                 if(!data.announcements || data.announcements.length === 0) ac.innerHTML = '<p class="text-[11px] opacity-50 p-2 text-center bg-gray-50 rounded-lg">Belum ada info lokal.</p>';
-                else ac.innerHTML = data.announcements.map((a,i) => `<div class="surface p-4 rounded-xl border border-gray-200 relative"><h4 class="font-bold text-sm text-gray-800 mb-1">${a.title}</h4><p class="text-[11px] opacity-70 leading-relaxed">${a.desc}</p>${(userData.role==='admin' || userData.role==='superadmin') ? `<button onclick="window.delLocAnn(${i})" class="absolute top-2 right-2 text-red-400 bg-gray-100 rounded-full w-6 h-6"><i class="fa-solid fa-xmark"></i></button>` : ''}</div>`).join('');
+                else ac.innerHTML = data.announcements.map((a,i) => `<div class="surface p-4 rounded-xl border border-gray-200 relative"><h4 class="font-bold text-sm text-gray-800 mb-1">${a.title}</h4><p class="text-[11px] opacity-70 leading-relaxed">${a.desc}</p>${(userData.role==='admin' || userData.role==='superadmin') ? `<button onclick="window.delLocAnn(${i})" class="absolute top-2 right-2 text-red-400 bg-gray-100 rounded-full w-6 h-6 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>` : ''}</div>`).join('');
                 const sc = document.getElementById('beranda-local-schedules');
                 if(!data.schedules || data.schedules.length === 0) sc.innerHTML = '<p class="text-[11px] opacity-50 p-2 text-center bg-gray-50 rounded-lg">Belum ada jadwal ibadah.</p>';
-                else sc.innerHTML = data.schedules.map((s,i) => `<div class="surface p-3 rounded-xl border-l-4 border-primary bg-gray-50 relative flex justify-between items-center"><div><h4 class="font-bold text-[13px]">${s.name}</h4><p class="text-[10px] opacity-70 mt-1"><i class="fa-regular fa-clock"></i> ${s.time} &nbsp; <i class="fa-solid fa-location-dot"></i> ${s.loc}</p></div>${(userData.role==='admin' || userData.role==='superadmin') ? `<button onclick="window.delLocSch(${i})" class="text-red-400 text-xs"><i class="fa-solid fa-trash"></i></button>` : ''}</div>`).join('');
+                else sc.innerHTML = data.schedules.map((s,i) => `<div class="surface p-3 rounded-xl border-l-4 border-primary bg-gray-50 relative flex justify-between items-center shadow-sm"><div><h4 class="font-bold text-[13px]">${s.name}</h4><p class="text-[10px] opacity-70 mt-1"><i class="fa-regular fa-clock"></i> ${s.time} &nbsp; <i class="fa-solid fa-location-dot"></i> ${s.loc}</p></div>${(userData.role==='admin' || userData.role==='superadmin') ? `<button onclick="window.delLocSch(${i})" class="text-red-400 text-xs w-6 h-6 bg-red-100 rounded flex justify-center items-center"><i class="fa-solid fa-trash"></i></button>` : ''}</div>`).join('');
             });
         }
 
+        // Admin actions
         function listenToAllProfilesForAdmin() {
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'profiles'), (snap) => {
                 allProfilesCache = []; snap.forEach(d => allProfilesCache.push({ id: d.id, ...d.data() })); renderAdminUsers();
@@ -649,31 +819,13 @@
             if(users.length === 0) { container.innerHTML = '<p class="text-center opacity-50 py-4 text-xs">Tidak ada pendaftar baru.</p>'; return; }
             container.innerHTML = users.map(u => `<div class="surface p-3 rounded-xl border flex justify-between items-center"><div><h4 class="font-bold text-xs">${u.name} <span class="text-[9px] bg-gray-200 px-1 rounded">${u.church}</span></h4><p class="text-[10px] opacity-70">${u.wa} • Kel. ${u.kel}</p></div><div class="flex flex-col gap-1"><button onclick="window.updateUser('${u.id}', 'approved', 'user')" class="bg-green-500 text-white text-[10px] px-2 py-1.5 rounded font-bold">Terima Anggota</button>${userData.role === 'superadmin' ? `<button onclick="window.updateUser('${u.id}', 'approved', 'admin')" class="bg-blue-500 text-white text-[10px] px-2 py-1.5 rounded font-bold">Jadikan Admin</button>` : ''}</div></div>`).join('');
         }
-
         window.updateUser = async (uid, status, role) => { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', uid), { status, role }); window.uiShowToast("Status anggota diperbarui!"); };
         window.saveGlobalVerse = async () => { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'globals', 'content'), { verse: document.getElementById('adm-glob-verse').value, ref: document.getElementById('adm-glob-ref').value }, { merge: true }); window.uiShowToast("Renungan disimpan"); };
-        window.saveGlobalAnn = async () => {
-            const title = document.getElementById('adm-glob-ann-title').value; const desc = document.getElementById('adm-glob-ann-desc').value; if(!title || !desc) return;
-            let anns = globalContentCache?.announcements || []; anns.unshift({ title, desc });
-            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'globals', 'content'), { announcements: anns }, { merge: true });
-            document.getElementById('adm-glob-ann-title').value = ''; document.getElementById('adm-glob-ann-desc').value = ''; window.uiShowToast("Pengumuman Global dikirim");
-        };
+        window.saveGlobalAnn = async () => { const title = document.getElementById('adm-glob-ann-title').value; const desc = document.getElementById('adm-glob-ann-desc').value; if(!title || !desc) return; let anns = globalContentCache?.announcements || []; anns.unshift({ title, desc }); await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'globals', 'content'), { announcements: anns }, { merge: true }); document.getElementById('adm-glob-ann-title').value = ''; document.getElementById('adm-glob-ann-desc').value = ''; window.uiShowToast("Pengumuman Global dikirim"); };
         window.delGlobAnn = async (idx) => { let anns = globalContentCache.announcements; anns.splice(idx, 1); await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'globals', 'content'), { announcements: anns }, { merge: true }); };
-        
-        window.saveLocalAnn = async () => {
-            const title = document.getElementById('adm-loc-ann-title').value; const desc = document.getElementById('adm-loc-ann-desc').value; if(!title || !desc) return;
-            let anns = localContentCache?.announcements || []; anns.unshift({ title, desc });
-            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'church_content', getSafeChurchId(userData.church)), { announcements: anns }, { merge: true });
-            document.getElementById('adm-loc-ann-title').value = ''; document.getElementById('adm-loc-ann-desc').value = ''; window.uiShowToast("Info Lokal dikirim");
-        };
+        window.saveLocalAnn = async () => { const title = document.getElementById('adm-loc-ann-title').value; const desc = document.getElementById('adm-loc-ann-desc').value; if(!title || !desc) return; let anns = localContentCache?.announcements || []; anns.unshift({ title, desc }); await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'church_content', getSafeChurchId(userData.church)), { announcements: anns }, { merge: true }); document.getElementById('adm-loc-ann-title').value = ''; document.getElementById('adm-loc-ann-desc').value = ''; window.uiShowToast("Info Lokal dikirim"); };
         window.delLocAnn = async (idx) => { let anns = localContentCache.announcements; anns.splice(idx, 1); await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'church_content', getSafeChurchId(userData.church)), { announcements: anns }, { merge: true }); };
-
-        window.saveLocalSchedule = async () => {
-            const name = document.getElementById('adm-loc-sch-name').value; const time = document.getElementById('adm-loc-sch-time').value; const loc = document.getElementById('adm-loc-sch-loc').value; if(!name || !time) return;
-            let sch = localContentCache?.schedules || []; sch.push({ name, time, loc });
-            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'church_content', getSafeChurchId(userData.church)), { schedules: sch }, { merge: true });
-            document.getElementById('adm-loc-sch-name').value = ''; document.getElementById('adm-loc-sch-time').value = ''; document.getElementById('adm-loc-sch-loc').value = ''; window.uiShowToast("Jadwal disimpan");
-        };
+        window.saveLocalSchedule = async () => { const name = document.getElementById('adm-loc-sch-name').value; const time = document.getElementById('adm-loc-sch-time').value; const loc = document.getElementById('adm-loc-sch-loc').value; if(!name || !time) return; let sch = localContentCache?.schedules || []; sch.push({ name, time, loc }); await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'church_content', getSafeChurchId(userData.church)), { schedules: sch }, { merge: true }); document.getElementById('adm-loc-sch-name').value = ''; document.getElementById('adm-loc-sch-time').value = ''; document.getElementById('adm-loc-sch-loc').value = ''; window.uiShowToast("Jadwal disimpan"); };
         window.delLocSch = async (idx) => { let sch = localContentCache.schedules; sch.splice(idx, 1); await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'church_content', getSafeChurchId(userData.church)), { schedules: sch }, { merge: true }); };
 
         document.getElementById('form-offer-ride')?.addEventListener('submit', async (e) => { 
@@ -684,23 +836,12 @@
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', currentUser.uid), { points: (userData.points || 0) + 10 }); window.uiToggleModal('modal-offer-transport'); e.target.reset(); window.toggleTariff('offer'); window.uiShowToast("Kendaraan ditawarkan! (+10 Poin)"); 
         });
         
-       document.getElementById('form-req-ride')?.addEventListener('submit', async (e) => { 
+        document.getElementById('form-req-ride')?.addEventListener('submit', async (e) => { 
             e.preventDefault(); 
             const typeSvc = document.getElementById('req-type').value;
-            // Tambahan: Mengambil nilai nominal jika berbayar
             const tariff = typeSvc === 'berbayar' ? document.getElementById('req-tariff').value : 'Gratis';
-            
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'rides'), { 
-                type: 'request', svcType: typeSvc, tariff: tariff, // Simpan ke database
-                passName: userData.name, passChurch: userData.church, passWa: userData.wa, passUid: currentUser.uid, 
-                dest: document.getElementById('req-dest').value, location: document.getElementById('req-location').value, 
-                people: parseInt(document.getElementById('req-people').value), status: 'active', createdAt: serverTimestamp() 
-            }); 
-            
-            window.uiToggleModal('modal-req-transport'); 
-            e.target.reset(); 
-            window.toggleTariff('req'); // Kembalikan form ke state awal
-            window.uiShowToast("Permintaan jemputan dikirim!"); 
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'rides'), { type: 'request', svcType: typeSvc, tariff: tariff, passName: userData.name, passChurch: userData.church, passWa: userData.wa, passUid: currentUser.uid, dest: document.getElementById('req-dest').value, location: document.getElementById('req-location').value, people: parseInt(document.getElementById('req-people').value), status: 'active', createdAt: serverTimestamp() }); 
+            window.uiToggleModal('modal-req-transport'); e.target.reset(); window.toggleTariff('req'); window.uiShowToast("Permintaan jemputan dikirim!"); 
         });
         
         function listenToRides() {
@@ -710,17 +851,17 @@
                 document.getElementById('list-available-rides').innerHTML = offers.length ? offers.map(o => `
                     <div class="surface p-4 rounded-xl border relative shadow-sm border-l-4 ${o.svcType === 'berbayar' ? 'border-l-orange-400' : 'border-l-green-400'}">
                         <div class="absolute top-0 right-0 ${o.svcType === 'berbayar' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'} text-[9px] font-bold px-2 py-1 rounded-bl-lg">
-                            ${o.svcType === 'berbayar' ? 'JASA ANTAR BERBAYAR' : 'NEBENG GRATIS'}
+                            ${o.svcType === 'berbayar' ? 'JASA ANTAR (BAYAR)' : 'NEBENG GRATIS'}
                         </div>
                         <div class="flex gap-3 mt-2">
                             <div class="w-10 h-10 rounded-lg bg-gray-100 text-gray-700 flex items-center justify-center font-bold">${o.driverName.charAt(0)}</div>
                             <div class="flex-1">
                                 <h4 class="font-bold text-sm">${o.driverName} <span class="text-[9px] bg-gray-100 px-1 rounded">${o.driverChurch}</span></h4>
                                 <p class="font-bold text-primary text-sm mb-1 line-clamp-1">${o.dest}</p>
-                                <p class="text-[10px] opacity-70 mb-1">Lewat: ${o.route} • Berangkat: ${o.time}</p>
+                                <p class="text-[10px] opacity-70 mb-1">Lewat: ${o.route} • Jam: ${o.time}</p>
                                 <p class="text-[10px] font-bold ${o.svcType === 'berbayar' ? 'text-orange-500' : 'text-green-500'}">Tarif: ${o.tariff} | Sisa ${o.seats} Kursi</p>
                                 <div class="flex gap-2 mt-3">
-                                    <a href="${getWaLink(o.driverWa, `Syalom ${o.driverName}, saya ${userData?.name} dari ${userData?.church}. Apakah kursi tujuan ${o.dest} masih sedia?`)}" target="_blank" class="flex-1 bg-green-500 text-white text-[11px] font-bold py-2 rounded-lg text-center shadow-sm">Hubungi via WA</a>
+                                    <a href="${getWaLink(o.driverWa, `Syalom ${o.driverName}, saya ${userData?.name}. Apakah kursi tujuan ${o.dest} masih sedia?`)}" target="_blank" class="flex-1 bg-green-500 text-white text-[11px] font-bold py-2 rounded-lg text-center shadow-sm">Hubungi via WA</a>
                                     ${(o.driverUid === userData?.uid || userData?.role === 'superadmin') ? `<button onclick="window.deleteDocById('rides', '${o.id}')" class="bg-red-50 text-red-500 px-3 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : ''}
                                 </div>
                             </div>
@@ -730,7 +871,7 @@
                 document.getElementById('list-requested-rides').innerHTML = requests.length ? requests.map(r => `
                     <div class="surface p-4 rounded-xl border relative shadow-sm border-l-4 ${r.svcType === 'berbayar' ? 'border-l-orange-400' : 'border-l-green-400'}">
                         <div class="absolute top-0 right-0 ${r.svcType === 'berbayar' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'} text-[9px] font-bold px-2 py-1 rounded-bl-lg">
-                            ${r.svcType === 'berbayar' ? 'CARI JASA ANTAR (BAYAR)' : 'CARI NEBENG (GRATIS)'}
+                            ${r.svcType === 'berbayar' ? 'CARI JASA (BAYAR)' : 'CARI NEBENG (GRATIS)'}
                         </div>
                         <div class="flex gap-3 mt-2">
                             <div class="w-10 h-10 rounded-lg bg-gray-100 text-gray-500 flex items-center justify-center font-bold">${r.passName.charAt(0)}</div>
@@ -738,9 +879,7 @@
                                 <h4 class="font-bold text-sm">${r.passName} <span class="text-[9px] bg-gray-100 px-1 rounded">${r.passChurch}</span></h4>
                                 <p class="text-xs text-gray-700 mt-1">Ingin ke: <span class="font-bold">${r.dest}</span></p>
                                 <p class="text-[10px] text-red-500 font-medium mt-1"><i class="fa-solid fa-location-dot"></i> Tunggu di: ${r.location} (${r.people} Org)</p>
-                                <!-- Tambahan: Menampilkan Nominal Tarif di sini -->
-                                <p class="text-[10px] font-bold ${r.svcType === 'berbayar' ? 'text-orange-500' : 'text-green-500'} mt-1">Tawaran Harga: ${r.tariff || 'Gratis'}</p>
-                                
+                                <p class="text-[10px] font-bold ${r.svcType === 'berbayar' ? 'text-orange-500' : 'text-green-500'} mt-1">Tawaran: ${r.tariff}</p>
                                 <div class="flex gap-2 mt-3">
                                     <a href="${getWaLink(r.passWa, `Syalom ${r.passName}, saya ${userData?.name}. Saya bersedia jemput di ${r.location}.`)}" target="_blank" class="flex-1 bg-primary text-white text-[11px] font-bold py-2 rounded-lg text-center shadow-sm">Tawarkan Jemputan</a>
                                     ${(r.passUid === userData?.uid || userData?.role === 'superadmin') ? `<button onclick="window.deleteDocById('rides', '${r.id}')" class="bg-red-50 text-red-500 px-3 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : ''}
@@ -748,6 +887,138 @@
                             </div>
                         </div>
                     </div>`).join('') : '<p class="text-center opacity-50 text-xs py-4">Tidak ada permintaan jemputan.</p>';
+            });
+        }
+
+        // NEW FEATURE: Jasa Asuh
+        document.getElementById('form-offer-asuh')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const typeSvc = document.getElementById('o-asuh-type').value;
+            const tariff = typeSvc === 'berbayar' ? document.getElementById('o-asuh-tariff').value : 'Relawan (Gratis)';
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'cares'), { type: 'offer', category: document.getElementById('o-asuh-cat').value, svcType: typeSvc, tariff: tariff, time: document.getElementById('o-asuh-time').value, desc: document.getElementById('o-asuh-desc').value, userName: userData.name, userChurch: userData.church, userWa: userData.wa, userUid: currentUser.uid, createdAt: serverTimestamp() });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', currentUser.uid), { points: (userData.points || 0) + 15 }); window.uiToggleModal('modal-offer-asuh'); e.target.reset(); window.toggleTariffAsuh('offer'); window.uiShowToast("Jasa Asuh ditawarkan! (+15 Poin)");
+        });
+
+        document.getElementById('form-req-asuh')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const typeSvc = document.getElementById('r-asuh-type').value;
+            const tariff = typeSvc === 'berbayar' ? document.getElementById('r-asuh-tariff').value : 'Mohon Bantuan Sukarela';
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'cares'), { type: 'request', category: document.getElementById('r-asuh-cat').value, svcType: typeSvc, tariff: tariff, time: document.getElementById('r-asuh-time').value, desc: document.getElementById('r-asuh-desc').value, userName: userData.name, userChurch: userData.church, userWa: userData.wa, userUid: currentUser.uid, createdAt: serverTimestamp() });
+            window.uiToggleModal('modal-req-asuh'); e.target.reset(); window.toggleTariffAsuh('req'); window.uiShowToast("Permintaan bantuan dikirim!");
+        });
+
+        function listenToCares() {
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'cares'), (snapshot) => {
+                const offers = []; const requests = [];
+                snapshot.forEach(doc => { const d = { id: doc.id, ...doc.data() }; d.type === 'offer' ? offers.push(d) : requests.push(d); });
+                
+                const getIcon = (cat) => {
+                    const icons = { 'Lansia':'fa-person-cane', 'Anak':'fa-children', 'Orang Sakit':'fa-bed-pulse', 'Hewan':'fa-paw', 'Rumah':'fa-house-chimney' };
+                    return icons[cat] || 'fa-hands-holding-child';
+                };
+
+                document.getElementById('list-available-cares').innerHTML = offers.length ? offers.map(o => `
+                    <div class="surface p-4 rounded-xl border shadow-sm flex flex-col gap-2 border-l-4 ${o.svcType === 'berbayar' ? 'border-l-orange-400' : 'border-l-rose-400'}">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center gap-2 text-rose-600"><i class="fa-solid ${getIcon(o.category)} text-xl"></i><h4 class="font-bold text-sm">Jaga ${o.category}</h4></div>
+                            <span class="text-[9px] font-bold px-2 py-0.5 rounded ${o.svcType === 'berbayar' ? 'bg-orange-100 text-orange-700' : 'bg-rose-100 text-rose-700'}">${o.svcType === 'berbayar' ? 'Jasa Berbayar' : 'Relawan Gratis'}</span>
+                        </div>
+                        <p class="text-[11px] opacity-80 bg-gray-50 p-2 rounded">"${o.desc}"</p>
+                        <p class="text-[10px] font-semibold text-gray-500"><i class="fa-regular fa-calendar-check"></i> Waktu: ${o.time}</p>
+                        <p class="text-[10px] font-bold ${o.svcType === 'berbayar' ? 'text-orange-500' : 'text-rose-500'}">Honor: ${o.tariff}</p>
+                        <div class="flex items-center justify-between mt-2 pt-2 border-t">
+                            <div class="flex items-center gap-2">
+                                <div class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-[10px] font-bold">${o.userName.charAt(0)}</div>
+                                <div class="text-[9px]"><span class="font-bold block">${o.userName}</span><span class="opacity-70">${o.userChurch}</span></div>
+                            </div>
+                            <div class="flex gap-2">
+                                ${(o.userUid === userData?.uid || userData?.role === 'superadmin') ? `<button onclick="window.deleteDocById('cares', '${o.id}')" class="text-red-400 text-xs px-2 py-1 bg-red-50 rounded"><i class="fa-solid fa-trash"></i></button>` : ''}
+                                <a href="${getWaLink(o.userWa, `Syalom ${o.userName}, saya butuh jasa asuh/rawat ${o.category} yang Anda tawarkan di Sahabat Kristus.`)}" target="_blank" class="bg-rose-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg shadow-sm">Hubungi WA</a>
+                            </div>
+                        </div>
+                    </div>`).join('') : '<p class="text-center opacity-50 text-xs py-4">Belum ada relawan yang menawarkan jasa.</p>';
+
+                document.getElementById('list-requested-cares').innerHTML = requests.length ? requests.map(r => `
+                    <div class="surface p-4 rounded-xl border shadow-sm flex flex-col gap-2 border-l-4 ${r.svcType === 'berbayar' ? 'border-l-orange-400' : 'border-l-rose-400'}">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center gap-2 text-rose-500"><i class="fa-solid ${getIcon(r.category)} text-xl"></i><h4 class="font-bold text-sm">Butuh Jaga ${r.category}</h4></div>
+                            <span class="text-[9px] font-bold px-2 py-0.5 rounded ${r.svcType === 'berbayar' ? 'bg-orange-100 text-orange-700' : 'bg-gray-100 text-gray-600'}">${r.svcType === 'berbayar' ? 'Sedia Dana' : 'Mohon Bantuan'}</span>
+                        </div>
+                        <p class="text-[11px] opacity-80 bg-red-50 p-2 rounded text-red-900 border border-red-100">"${r.desc}"</p>
+                        <p class="text-[10px] font-semibold text-gray-500"><i class="fa-regular fa-clock"></i> Kapan: ${r.time}</p>
+                        <p class="text-[10px] font-bold ${r.svcType === 'berbayar' ? 'text-orange-500' : 'text-gray-500'}">Anggaran: ${r.tariff}</p>
+                        <div class="flex items-center justify-between mt-2 pt-2 border-t">
+                            <div class="flex items-center gap-2">
+                                <div class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-[10px] font-bold">${r.userName.charAt(0)}</div>
+                                <div class="text-[9px]"><span class="font-bold block">${r.userName}</span><span class="opacity-70">${r.userChurch}</span></div>
+                            </div>
+                            <div class="flex gap-2">
+                                ${(r.userUid === userData?.uid || userData?.role === 'superadmin') ? `<button onclick="window.deleteDocById('cares', '${r.id}')" class="text-red-400 text-xs px-2 py-1 bg-red-50 rounded"><i class="fa-solid fa-trash"></i></button>` : ''}
+                                <a href="${getWaLink(r.userWa, `Syalom ${r.userName}, saya bersedia membantu menjaga ${r.category} Anda.`)}" target="_blank" class="bg-rose-100 text-rose-600 border border-rose-300 text-[10px] font-bold px-3 py-1.5 rounded-lg shadow-sm">Bantu Rawat</a>
+                            </div>
+                        </div>
+                    </div>`).join('') : '<p class="text-center opacity-50 text-xs py-4">Tidak ada permintaan bantuan asuh.</p>';
+            });
+        }
+
+        // NEW FEATURE: Usaha Jemaat (Business)
+        document.getElementById('form-add-food')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'businesses'), { type: 'food', name: document.getElementById('food-name').value, price: document.getElementById('food-price').value, system: document.getElementById('food-system').value, time: document.getElementById('food-time').value, desc: document.getElementById('food-desc').value, userName: userData.name, userChurch: userData.church, userWa: userData.wa, userUid: currentUser.uid, createdAt: serverTimestamp() });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', currentUser.uid), { points: (userData.points || 0) + 10 }); window.uiToggleModal('modal-add-food'); e.target.reset(); window.uiShowToast("Makanan diposting! (+10 Poin)");
+        });
+
+        document.getElementById('form-add-service')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'businesses'), { type: 'service', name: document.getElementById('svc-name').value, price: document.getElementById('svc-price').value, link: document.getElementById('svc-link').value, desc: document.getElementById('svc-desc').value, userName: userData.name, userChurch: userData.church, userWa: userData.wa, userUid: currentUser.uid, createdAt: serverTimestamp() });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', currentUser.uid), { points: (userData.points || 0) + 10 }); window.uiToggleModal('modal-add-service'); e.target.reset(); window.uiShowToast("Jasa diposting! (+10 Poin)");
+        });
+
+        function listenToBusinesses() {
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'businesses'), (snapshot) => {
+                const foods = []; const services = [];
+                snapshot.forEach(doc => { const d = { id: doc.id, ...doc.data() }; d.type === 'food' ? foods.push(d) : services.push(d); });
+                
+                document.getElementById('list-foods').innerHTML = foods.length ? foods.map(f => `
+                    <div class="surface p-4 rounded-xl border shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 right-0 ${f.system === 'po' ? 'bg-orange-500' : 'bg-emerald-500'} text-white text-[9px] font-bold px-3 py-1 rounded-bl-lg shadow-sm">
+                            ${f.system === 'po' ? 'PRE-ORDER (PO)' : 'READY STOCK'}
+                        </div>
+                        <h4 class="font-bold text-amber-700 text-lg mb-1 mt-2">${f.name}</h4>
+                        <p class="text-sm font-bold text-emerald-600 mb-2">${f.price}</p>
+                        <p class="text-[11px] opacity-80 mb-2 leading-relaxed bg-amber-50 p-2 rounded-lg border border-amber-100">"${f.desc}"</p>
+                        <p class="text-[10px] font-semibold text-gray-500 mb-3"><i class="fa-solid fa-truck-fast"></i> Jadwal: ${f.time}</p>
+                        <div class="flex items-center justify-between border-t pt-3">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-[10px] font-bold"><i class="fa-solid fa-shop"></i></div>
+                                <div class="text-[9px]"><span class="font-bold block">${f.userName}</span><span class="opacity-70">${f.userChurch}</span></div>
+                            </div>
+                            <div class="flex gap-2">
+                                ${(f.userUid === userData?.uid || userData?.role === 'superadmin') ? `<button onclick="window.deleteDocById('businesses', '${f.id}')" class="text-red-400 text-xs px-2 py-1.5 bg-red-50 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : ''}
+                                <a href="${getWaLink(f.userWa, `Syalom ${f.userName}, saya ingin pesan ${f.name} yang dijual di Sahabat Kristus.`)}" target="_blank" class="bg-amber-500 hover:bg-amber-600 text-white text-[11px] font-bold px-4 py-2 rounded-lg shadow-sm transition">Pesan via WA</a>
+                            </div>
+                        </div>
+                    </div>`).join('') : '<p class="text-center opacity-50 text-xs py-4">Belum ada makanan/PO yang dijual.</p>';
+
+                document.getElementById('list-services').innerHTML = services.length ? services.map(s => `
+                    <div class="surface p-4 rounded-xl border shadow-sm">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-indigo-700 text-base">${s.name}</h4>
+                            ${(s.userUid === userData?.uid || userData?.role === 'superadmin') ? `<button onclick="window.deleteDocById('businesses', '${s.id}')" class="text-red-400 text-xs px-2 bg-red-50 rounded"><i class="fa-solid fa-trash"></i></button>` : ''}
+                        </div>
+                        <p class="text-[11px] font-bold text-orange-500 mb-2"><i class="fa-solid fa-tag"></i> Tarif: ${s.price}</p>
+                        <p class="text-[11px] opacity-80 mb-3 bg-gray-50 p-2 rounded whitespace-pre-wrap">"${s.desc}"</p>
+                        <div class="flex items-center justify-between border-t pt-3">
+                            <div class="flex items-center gap-2">
+                                <div class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-[10px] font-bold">${s.userName.charAt(0)}</div>
+                                <div class="text-[9px]"><span class="font-bold block">${s.userName}</span><span class="opacity-70">${s.userChurch}</span></div>
+                            </div>
+                            <div class="flex gap-2">
+                                ${s.link ? `<a href="${s.link}" target="_blank" class="bg-gray-100 text-gray-700 text-[10px] font-bold px-3 py-2 rounded-lg"><i class="fa-solid fa-link"></i> Info/Web</a>` : ''}
+                                <a href="${getWaLink(s.userWa, `Syalom ${s.userName}, saya tertarik menggunakan jasa profesi (${s.name}) Anda di Sahabat Kristus.`)}" target="_blank" class="bg-indigo-500 text-white text-[10px] font-bold px-3 py-2 rounded-lg shadow-sm">Kontak Jasa</a>
+                            </div>
+                        </div>
+                    </div>`).join('') : '<p class="text-center opacity-50 text-xs py-4">Belum ada penawaran jasa propesi.</p>';
             });
         }
 
@@ -762,10 +1033,10 @@
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'jastips'), (snapshot) => {
                 const jastips = []; snapshot.forEach(doc => { if (doc.data().status === 'open') jastips.push({ id: doc.id, ...doc.data() }); });
                 document.getElementById('list-jastip').innerHTML = jastips.length ? jastips.map(j => `
-                    <div class="surface p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col relative">
+                    <div class="surface p-4 rounded-xl border border-emerald-100 shadow-sm flex flex-col relative">
                         ${(j.openerUid === userData?.uid || userData?.role === 'superadmin') ? `<button onclick="window.deleteDocById('jastips', '${j.id}')" class="absolute top-2 right-2 text-red-400 bg-red-50 rounded-full w-6 h-6 flex justify-center items-center"><i class="fa-solid fa-xmark text-xs"></i></button>` : ''}
-                        <div class="flex justify-between items-start mb-2"><h4 class="font-bold text-emerald-600 text-sm max-w-[70%]">${j.itemName}</h4></div>
-                        <div class="flex gap-2 mb-3">
+                        <div class="flex justify-between items-start mb-2"><h4 class="font-bold text-emerald-600 text-sm max-w-[80%]">${j.itemName}</h4></div>
+                        <div class="flex gap-2 mb-3 flex-wrap">
                             <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[9px] font-bold px-2 py-1 rounded">Biaya Jasa: ${j.fee}</span>
                             <span class="bg-red-50 text-red-600 border border-red-200 text-[9px] font-bold px-2 py-1 rounded line-clamp-1"><i class="fa-solid fa-location-dot"></i> ${j.pickupLoc}</span>
                         </div>
@@ -779,6 +1050,7 @@
                     </div>`).join('') : '<div class="col-span-full text-center opacity-50 py-4 text-xs">Belum ada PO/Jastip yang buka.</div>';
             });
         }
+        
         window.deleteDocById = async (collectionName, docId) => { if(confirm('Hapus postingan ini?')) { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', collectionName, docId)); window.uiShowToast("Postingan dihapus."); } };
 
         document.getElementById('csvFileInput').addEventListener('change', (e) => {
