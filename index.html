@@ -130,12 +130,10 @@
 
                         <div>
                             <label class="block text-[11px] font-bold mb-1 opacity-70 uppercase">Pilih Gereja</label>
+                            <!-- Daftar Gereja akan dimuat dari database -->
                             <select id="reg-church" required class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-transparent focus:border-primary text-sm font-bold">
                                 <option value="">Pilih Gereja Asal...</option>
-                                <option value="GPdI Cipondoh Makmur Tangerang">GPdI Cipondoh Makmur Tangerang</option>
-                                <option value="GBI Bukit Sion Mlaten Gempol">GBI Bukit Sion Mlaten Gempol</option>
-                                <option value="GPdI Jajag Banyuwangi">GPdI Jajag Banyuwangi</option>
-                                <option value="Gereja Lainnya">Gereja Lainnya...</option>
+                                <option value="Memuat Data...">Memuat Data...</option>
                             </select>
                         </div>
                         <div>
@@ -165,7 +163,7 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <button onclick="window.uiToggleModal('modal-theme')" class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 flex justify-center items-center hover:bg-gray-200 transition"><i class="fa-solid fa-palette text-sm opacity-70"></i></button>
-                    <!-- Tombol Profil dipindah ke Header -->
+                    <!-- Tombol Profil -->
                     <button onclick="window.uiNav('profil')" id="btn-nav-profil" class="w-8 h-8 rounded-full bg-primary text-white flex justify-center items-center hover:opacity-90 transition shadow-sm border-2 border-white dark:border-gray-700"><i class="fa-solid fa-user text-xs"></i></button>
                 </div>
             </header>
@@ -189,6 +187,12 @@
                         <i class="fa-solid fa-cross absolute -right-6 -bottom-6 text-[100px] opacity-10 transform -rotate-12"></i>
                     </div>
 
+                    <!-- FITUR BARU: MEDIA & KHOTBAH -->
+                    <div id="section-khotbah" class="hidden">
+                        <h3 class="font-bold text-sm mb-2 flex items-center gap-2 text-red-500"><i class="fa-brands fa-youtube"></i> Media & Khotbah Lokal</h3>
+                        <div id="beranda-khotbah" class="space-y-3"></div>
+                    </div>
+
                     <div id="section-global-ann">
                         <h3 class="font-bold text-sm mb-2 flex items-center gap-2 text-primary"><i class="fa-solid fa-globe"></i> Info Lintas Gereja</h3>
                         <div id="beranda-global-announcements" class="space-y-3"></div>
@@ -202,18 +206,39 @@
                     </div>
                 </div>
 
+                <!-- FITUR BARU: PAGE DOA -->
+                <div id="page-doa" class="page-section hidden space-y-4">
+                    <div class="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 p-4 rounded-xl flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-800 text-purple-600 dark:text-purple-300 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-hands-praying"></i></div>
+                        <div>
+                            <h2 class="font-bold text-sm leading-tight mb-1">Permohonan Doa</h2>
+                            <p class="text-[10px] opacity-70 leading-snug">Saling menopang dalam doa. Bagikan pergumulanmu, atau dukung doa jemaat lain.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex bg-gray-200/50 dark:bg-gray-800/50 rounded-xl p-1 relative">
+                        <button onclick="window.uiSwitchTab('doa', 'lokal')" id="tab-doa-lokal" class="flex-1 py-2 text-sm font-bold rounded-lg bg-surface text-purple-600 shadow-sm z-10 transition-all">Gereja Lokal</button>
+                        <button onclick="window.uiSwitchTab('doa', 'global')" id="tab-doa-global" class="flex-1 py-2 text-sm font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all">Seluruh Gereja</button>
+                    </div>
+
+                    <button onclick="window.uiToggleModal('modal-add-prayer')" class="w-full bg-purple-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-md hover:bg-purple-600 transition"><i class="fa-solid fa-plus-circle"></i> Bagikan Pokok Doa</button>
+
+                    <div id="view-doa-lokal" class="space-y-4 pb-4"></div>
+                    <div id="view-doa-global" class="hidden space-y-4 pb-4"></div>
+                </div>
+
                 <!-- PAGE: TRANSPORTASI -->
                 <div id="page-transport" class="page-section hidden space-y-4">
                     <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-4 rounded-xl flex items-center gap-4">
                         <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-300 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-car-side"></i></div>
                         <div>
                             <h2 class="font-bold text-sm leading-tight mb-1">Nebeng & Jasa Antar</h2>
-                            <p class="text-[10px] opacity-70 leading-snug">Berbagi tumpangan gratis antar jemaat atau gunakan jasa antar dari jemaat tepercaya.</p>
+                            <p class="text-[10px] opacity-70 leading-snug">Berbagi tumpangan gratis antar jemaat atau gunakan jasa antar tepercaya.</p>
                         </div>
                     </div>
                     <div class="flex bg-gray-200/50 dark:bg-gray-800/50 rounded-xl p-1 relative">
-                        <button onclick="window.uiSwitchTab('transport', 'cari')" id="tab-transport-cari" class="flex-1 py-2 text-sm font-bold rounded-lg bg-surface text-primary shadow-sm z-10 transition-all">Kendaraan Tersedia</button>
-                        <button onclick="window.uiSwitchTab('transport', 'beri')" id="tab-transport-beri" class="flex-1 py-2 text-sm font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all">Butuh Jemputan</button>
+                        <button onclick="window.uiSwitchTab('transport', 'cari')" id="tab-transport-cari" class="flex-1 py-2 text-sm font-bold rounded-lg bg-surface text-primary shadow-sm z-10 transition-all">Kendaraan</button>
+                        <button onclick="window.uiSwitchTab('transport', 'beri')" id="tab-transport-beri" class="flex-1 py-2 text-sm font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all">Butuh Jemput</button>
                     </div>
                     
                     <div id="view-transport-cari" class="space-y-4">
@@ -233,11 +258,11 @@
                         <div class="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-800 text-rose-600 dark:text-rose-300 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-hand-holding-heart"></i></div>
                         <div>
                             <h2 class="font-bold text-sm leading-tight mb-1">Jasa Asuh & Rawat</h2>
-                            <p class="text-[10px] opacity-70 leading-snug">Saling bantu jaga lansia, anak, hewan peliharaan, atau rumah antar sesama jemaat.</p>
+                            <p class="text-[10px] opacity-70 leading-snug">Saling bantu jaga lansia, anak, hewan peliharaan, atau rumah.</p>
                         </div>
                     </div>
                     <div class="flex bg-gray-200/50 dark:bg-gray-800/50 rounded-xl p-1 relative">
-                        <button onclick="window.uiSwitchTab('asuh', 'cari')" id="tab-asuh-cari" class="flex-1 py-2 text-sm font-bold rounded-lg bg-surface text-rose-500 shadow-sm z-10 transition-all">Relawan Tersedia</button>
+                        <button onclick="window.uiSwitchTab('asuh', 'cari')" id="tab-asuh-cari" class="flex-1 py-2 text-sm font-bold rounded-lg bg-surface text-rose-500 shadow-sm z-10 transition-all">Relawan</button>
                         <button onclick="window.uiSwitchTab('asuh', 'beri')" id="tab-asuh-beri" class="flex-1 py-2 text-sm font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all">Butuh Bantuan</button>
                     </div>
                     
@@ -247,7 +272,7 @@
                     </div>
                     
                     <div id="view-asuh-beri" class="hidden space-y-4">
-                        <button onclick="window.uiToggleModal('modal-req-asuh')" class="w-full border-2 border-rose-500 text-rose-500 font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 hover:bg-rose-50 dark:hover:bg-rose-900/10 transition"><i class="fa-solid fa-bell-concierge"></i> Buat Permintaan Bantuan</button>
+                        <button onclick="window.uiToggleModal('modal-req-asuh')" class="w-full border-2 border-rose-500 text-rose-500 font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 hover:bg-rose-50 transition"><i class="fa-solid fa-bell-concierge"></i> Buat Permintaan Bantuan</button>
                         <div id="list-requested-cares" class="space-y-3 pb-4"></div>
                     </div>
                 </div>
@@ -258,14 +283,14 @@
                         <div class="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-800 text-amber-600 dark:text-amber-300 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-store"></i></div>
                         <div>
                             <h2 class="font-bold text-sm leading-tight mb-1">Pasar Jemaat</h2>
-                            <p class="text-[10px] opacity-70 leading-snug">Dukung usaha sesama: Beli makanan, gunakan jasa profesi, atau ikut Jastip kolektif.</p>
+                            <p class="text-[10px] opacity-70 leading-snug">Dukung usaha sesama: Beli makanan, gunakan jasa profesi, atau ikut Jastip.</p>
                         </div>
                     </div>
                     
                     <div class="flex bg-gray-200/50 dark:bg-gray-800/50 rounded-xl p-1 relative overflow-x-auto hide-scroll">
-                        <button onclick="window.uiSwitchTab('usaha', 'makanan')" id="tab-usaha-makanan" class="flex-1 min-w-[90px] py-2 text-xs font-bold rounded-lg bg-surface text-amber-600 shadow-sm z-10 transition-all">Makanan & PO</button>
-                        <button onclick="window.uiSwitchTab('usaha', 'jasa')" id="tab-usaha-jasa" class="flex-1 min-w-[90px] py-2 text-xs font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all">Jasa Profesi</button>
-                        <button onclick="window.uiSwitchTab('usaha', 'jastip')" id="tab-usaha-jastip" class="flex-1 min-w-[90px] py-2 text-xs font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all">Jastip</button>
+                        <button onclick="window.uiSwitchTab('usaha', 'makanan')" id="tab-usaha-makanan" class="flex-1 min-w-[85px] py-2 text-[11px] font-bold rounded-lg bg-surface text-amber-600 shadow-sm z-10 transition-all">Makanan & PO</button>
+                        <button onclick="window.uiSwitchTab('usaha', 'jasa')" id="tab-usaha-jasa" class="flex-1 min-w-[85px] py-2 text-[11px] font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all">Jasa Profesi</button>
+                        <button onclick="window.uiSwitchTab('usaha', 'jastip')" id="tab-usaha-jastip" class="flex-1 min-w-[85px] py-2 text-[11px] font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all">Jastip</button>
                     </div>
 
                     <!-- Sub-view Makanan -->
@@ -280,7 +305,7 @@
                         <div id="list-services" class="grid grid-cols-1 gap-4 pb-4"></div>
                     </div>
 
-                    <!-- Sub-view Jastip (Dipindah ke sini) -->
+                    <!-- Sub-view Jastip -->
                     <div id="view-usaha-jastip" class="hidden space-y-4">
                         <div class="bg-emerald-50 dark:bg-emerald-900/10 p-3 rounded-lg text-center mb-2 border border-emerald-100">
                             <h3 class="text-xs font-bold text-emerald-700"><i class="fa-solid fa-bag-shopping"></i> Jastip Kolektif</h3>
@@ -331,29 +356,57 @@
                 </div>
             </main>
 
-            <!-- NAV BOTTOM (Diperbarui menjadi 5 Menu) -->
+            <!-- NAV BOTTOM (Kini berisi 6 Menu yang dipadatkan) -->
             <nav class="absolute bottom-0 w-full h-[70px] glass-nav flex justify-around items-center px-1 z-50 rounded-b-lg">
                 <button onclick="window.uiNav('beranda')" class="nav-btn active-nav flex-1 flex flex-col items-center justify-center gap-1 text-primary transition">
-                    <i class="fa-solid fa-house text-xl mb-0.5"></i><span class="text-[9px] font-bold">Beranda</span>
+                    <i class="fa-solid fa-house text-[17px] mb-0.5"></i><span class="text-[9px] font-bold">Beranda</span>
+                </button>
+                <button onclick="window.uiNav('doa')" class="nav-btn flex-1 flex flex-col items-center justify-center gap-1 text-gray-400 transition">
+                    <i class="fa-solid fa-hands-praying text-[17px] mb-0.5"></i><span class="text-[9px] font-bold">Doa</span>
                 </button>
                 <button onclick="window.uiNav('transport')" class="nav-btn flex-1 flex flex-col items-center justify-center gap-1 text-gray-400 transition">
-                    <i class="fa-solid fa-car text-xl mb-0.5"></i><span class="text-[9px] font-bold">Transport</span>
+                    <i class="fa-solid fa-car text-[17px] mb-0.5"></i><span class="text-[9px] font-bold">Trans</span>
                 </button>
                 <button onclick="window.uiNav('asuh')" class="nav-btn flex-1 flex flex-col items-center justify-center gap-1 text-gray-400 transition">
-                    <i class="fa-solid fa-hand-holding-heart text-xl mb-0.5"></i><span class="text-[9px] font-bold">Asuh</span>
+                    <i class="fa-solid fa-hand-holding-heart text-[17px] mb-0.5"></i><span class="text-[9px] font-bold">Asuh</span>
                 </button>
                 <button onclick="window.uiNav('usaha')" class="nav-btn flex-1 flex flex-col items-center justify-center gap-1 text-gray-400 transition">
-                    <i class="fa-solid fa-store text-xl mb-0.5"></i><span class="text-[9px] font-bold">Usaha</span>
+                    <i class="fa-solid fa-store text-[17px] mb-0.5"></i><span class="text-[9px] font-bold">Usaha</span>
                 </button>
                 <button onclick="window.uiNav('alkitab')" class="nav-btn flex-1 flex flex-col items-center justify-center gap-1 text-gray-400 transition">
-                    <i class="fa-solid fa-book-bible text-xl mb-0.5"></i><span class="text-[9px] font-bold">Alkitab</span>
+                    <i class="fa-solid fa-book-bible text-[17px] mb-0.5"></i><span class="text-[9px] font-bold">Alkitab</span>
                 </button>
             </nav>
         </div>
 
         <!-- === MODALS === -->
         
-        <!-- Modal Admin -->
+        <!-- Modal Pokok Doa (FITUR BARU) -->
+        <div id="modal-add-prayer" class="absolute inset-0 bg-black/60 z-[70] hidden flex-col justify-end backdrop-blur-sm">
+            <div class="surface rounded-t-3xl p-6 w-full animate-slide-up h-[80vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-5"><h3 class="font-bold text-lg"><i class="fa-solid fa-hands-praying text-purple-500 mr-2"></i>Bagikan Pokok Doa</h3><button onclick="window.uiToggleModal('modal-add-prayer')" class="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full"><i class="fa-solid fa-xmark"></i></button></div>
+                <form id="form-add-prayer" class="space-y-4">
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Bagikan Ke</label>
+                        <select id="prayer-target" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm focus:border-purple-500">
+                            <option value="lokal">Hanya Gereja Lokal Saya</option>
+                            <option value="global">Seluruh Gereja (Global)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Pokok Doa</label>
+                        <textarea id="prayer-content" required rows="4" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Tuliskan pergumulan atau hal yang ingin didoakan bersama..."></textarea>
+                    </div>
+                    <div class="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+                        <input type="checkbox" id="prayer-anon" class="w-4 h-4 text-purple-600 rounded border-gray-300">
+                        <label for="prayer-anon" class="text-xs font-medium cursor-pointer">Posting sebagai Anonim (Sembunyikan Nama)</label>
+                    </div>
+                    <button type="submit" class="w-full bg-purple-500 text-white font-bold py-3.5 rounded-xl shadow-lg mt-2 text-sm">Kirim Pokok Doa</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal Admin (DIPERBARUI) -->
         <div id="modal-admin" class="absolute inset-0 bg-black/60 z-[70] hidden flex-col justify-end backdrop-blur-sm">
             <div class="surface rounded-t-3xl p-6 h-[90vh] overflow-y-auto w-full animate-slide-up flex flex-col">
                 <div class="flex justify-between items-center mb-4">
@@ -364,16 +417,39 @@
                     <button onclick="window.uiSwitchTab('adm', 'users')" id="tab-adm-users" class="px-3 py-1.5 text-[11px] font-bold bg-primary text-white rounded-lg whitespace-nowrap transition-colors">Anggota Pending</button>
                     <button onclick="window.uiSwitchTab('adm', 'local')" id="tab-adm-local" class="px-3 py-1.5 text-[11px] font-bold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg whitespace-nowrap transition-colors">Gereja Lokal</button>
                     <button onclick="window.uiSwitchTab('adm', 'global')" id="tab-adm-global" class="hidden px-3 py-1.5 text-[11px] font-bold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg whitespace-nowrap transition-colors">Global</button>
+                    <button onclick="window.uiSwitchTab('adm', 'churches')" id="tab-adm-churches" class="hidden px-3 py-1.5 text-[11px] font-bold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg whitespace-nowrap transition-colors">Daftar Gereja</button>
                 </div>
                 <div class="flex-1 overflow-y-auto pb-6">
                     <div id="view-adm-users" class="space-y-3"><p class="text-[11px] opacity-70 mb-2">Daftar anggota yang menunggu disetujui.</p><div id="admin-pending-users-list" class="space-y-3"></div></div>
+                    
                     <div id="view-adm-local" class="hidden space-y-4">
+                        <!-- FITUR BARU: ADMIN KHOTBAH -->
+                        <div class="p-4 rounded-xl border border-red-200 bg-red-50 dark:bg-red-900/10">
+                            <h4 class="font-bold text-sm mb-2 text-red-700">Media & Khotbah Mingguan</h4>
+                            <input type="text" id="adm-loc-sermon-title" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Judul Khotbah (Wajib)">
+                            <input type="text" id="adm-loc-sermon-yt" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Link YouTube (Opsional, cth: https://youtu.be/...)">
+                            <textarea id="adm-loc-sermon-desc" rows="2" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Teks Ringkasan atau Tautan Link PDF File"></textarea>
+                            <button onclick="window.saveLocalSermon()" class="bg-red-600 text-white font-bold py-2 px-4 rounded-lg text-xs w-full">Simpan Khotbah Lokal</button>
+                        </div>
+                        
                         <div class="p-4 rounded-xl border border-blue-200 bg-blue-50 dark:bg-blue-900/10"><h4 class="font-bold text-sm mb-2">Pengumuman Lokal</h4><input type="text" id="adm-loc-ann-title" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Judul"><textarea id="adm-loc-ann-desc" rows="2" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Isi..."></textarea><button onclick="window.saveLocalAnn()" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg text-xs w-full">Kirim</button></div>
                         <div class="p-4 rounded-xl border border-purple-200 bg-purple-50 dark:bg-purple-900/10"><h4 class="font-bold text-sm mb-2">Jadwal Lokal</h4><input type="text" id="adm-loc-sch-name" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Nama Ibadah"><input type="text" id="adm-loc-sch-time" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Waktu (Minggu, 07:00)"><input type="text" id="adm-loc-sch-loc" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Lokasi (Gedung)"><button onclick="window.saveLocalSchedule()" class="bg-purple-600 text-white font-bold py-2 px-4 rounded-lg text-xs w-full">Simpan</button></div>
                     </div>
+                    
                     <div id="view-adm-global" class="hidden space-y-4">
                         <div class="p-4 rounded-xl border border-yellow-200 bg-yellow-50 dark:bg-yellow-900/10"><h4 class="font-bold text-sm mb-2">Renungan Global</h4><textarea id="adm-glob-verse" rows="2" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2"></textarea><input type="text" id="adm-glob-ref" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2"><button onclick="window.saveGlobalVerse()" class="bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg text-xs w-full">Update</button></div>
-                        <div class="p-4 rounded-xl border border-red-200 bg-red-50 dark:bg-red-900/10"><h4 class="font-bold text-sm mb-2">Pengumuman Global</h4><input type="text" id="adm-glob-ann-title" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Judul"><textarea id="adm-glob-ann-desc" rows="2" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Isi..."></textarea><button onclick="window.saveGlobalAnn()" class="bg-red-600 text-white font-bold py-2 px-4 rounded-lg text-xs w-full">Siarkan</button></div>
+                        <div class="p-4 rounded-xl border border-red-200 bg-red-50 dark:bg-red-900/10"><h4 class="font-bold text-sm mb-2">Pengumuman Global</h4><input type="text" id="adm-glob-ann-title" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Judul"><textarea id="adm-glob-ann-desc" rows="2" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Isi..."></textarea><button onclick="window.saveGlobalAnn()" class="bg-red-600 text-white font-bold py-2 px-4 rounded-lg text-xs w-full">Siarkan Global</button></div>
+                    </div>
+
+                    <!-- FITUR BARU: ADMIN GEREJA (Khusus Superadmin) -->
+                    <div id="view-adm-churches" class="hidden space-y-4">
+                        <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50 dark:bg-emerald-900/10">
+                            <h4 class="font-bold text-sm mb-2 text-emerald-800">Tambah Gereja Baru ke Sistem</h4>
+                            <input type="text" id="adm-new-church-name" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Nama Gereja (cth: GPdI Cipondoh)">
+                            <button onclick="window.saveNewChurch()" class="bg-emerald-600 text-white font-bold py-2 px-4 rounded-lg text-xs w-full">Tambahkan ke Database</button>
+                        </div>
+                        <h4 class="font-bold text-sm mt-4">Daftar Gereja Terdaftar</h4>
+                        <div id="list-adm-churches" class="space-y-2"></div>
                     </div>
                 </div>
             </div>
@@ -556,23 +632,14 @@
 
     <!-- === SCRIPT UI === -->
     <script>
-        // Modified uiNav to handle Profile being outside bottom nav
         window.uiNav = function(pageId) {
-            // Reset bottom nav buttons
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('text-primary');
-                btn.classList.add('text-gray-400');
-                btn.classList.remove('active-nav');
+                btn.classList.remove('text-primary'); btn.classList.add('text-gray-400'); btn.classList.remove('active-nav');
             });
             
-            // Highlight active nav if it exists in bottom nav
             const activeBtn = document.querySelector(`.nav-btn[onclick="window.uiNav('${pageId}')"]`);
-            if(activeBtn) {
-                activeBtn.classList.remove('text-gray-400');
-                activeBtn.classList.add('text-primary', 'active-nav');
-            }
+            if(activeBtn) { activeBtn.classList.remove('text-gray-400'); activeBtn.classList.add('text-primary', 'active-nav'); }
 
-            // Highlight Profile button in header if selected
             const profileBtn = document.getElementById('btn-nav-profil');
             if(pageId === 'profil') profileBtn.classList.add('ring-2', 'ring-blue-400');
             else profileBtn.classList.remove('ring-2', 'ring-blue-400');
@@ -594,24 +661,22 @@
             }
         };
 
-        // Universal Tab Switcher for internal pages (Transport, Asuh, Usaha, Admin)
         window.uiSwitchTab = function(context, tabName) {
-            // 1. Reset all buttons in this context
             document.querySelectorAll(`button[id^="tab-${context}-"]`).forEach(b => { 
-                b.className = "flex-1 min-w-[90px] py-2 text-xs font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all"; // default inactive state
+                b.className = "flex-1 min-w-[85px] py-2 text-[11px] font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all"; 
                 if(context === 'adm') b.className = "px-3 py-1.5 text-[11px] font-bold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg whitespace-nowrap transition-colors";
+                if(context === 'doa') b.className = "flex-1 py-2 text-sm font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all";
+                if(context === 'transport' || context === 'asuh') b.className = "flex-1 py-2 text-sm font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all";
             });
-            // 2. Hide all views in this context
             document.querySelectorAll(`div[id^="view-${context}-"]`).forEach(v => v.classList.add('hidden'));
             
-            // 3. Activate selected button
             const activeBtn = document.getElementById(`tab-${context}-${tabName}`);
-            if(context === 'transport') activeBtn.className = "flex-1 min-w-[90px] py-2 text-sm font-bold rounded-lg bg-surface text-primary shadow-sm z-10 transition-all";
-            else if(context === 'asuh') activeBtn.className = "flex-1 min-w-[90px] py-2 text-sm font-bold rounded-lg bg-surface text-rose-500 shadow-sm z-10 transition-all";
-            else if(context === 'usaha') activeBtn.className = "flex-1 min-w-[90px] py-2 text-xs font-bold rounded-lg bg-surface text-amber-600 shadow-sm z-10 transition-all";
+            if(context === 'transport') activeBtn.className = "flex-1 py-2 text-sm font-bold rounded-lg bg-surface text-primary shadow-sm z-10 transition-all";
+            else if(context === 'asuh') activeBtn.className = "flex-1 py-2 text-sm font-bold rounded-lg bg-surface text-rose-500 shadow-sm z-10 transition-all";
+            else if(context === 'usaha') activeBtn.className = "flex-1 min-w-[85px] py-2 text-[11px] font-bold rounded-lg bg-surface text-amber-600 shadow-sm z-10 transition-all";
             else if(context === 'adm') activeBtn.className = "px-3 py-1.5 text-[11px] font-bold bg-primary text-white rounded-lg whitespace-nowrap transition-colors";
+            else if(context === 'doa') activeBtn.className = "flex-1 py-2 text-sm font-bold rounded-lg bg-surface text-purple-600 shadow-sm z-10 transition-all";
 
-            // 4. Show selected view
             document.getElementById(`view-${context}-${tabName}`).classList.remove('hidden');
         };
 
@@ -657,7 +722,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc, updateDoc, deleteDoc, serverTimestamp, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         let firebaseConfig = {
             apiKey: "AIzaSyA8g0YxIzirNm8u3T1QKredTZFxg7FKMZs", 
@@ -681,6 +746,38 @@
 
         const getEmailFromWa = (wa) => `${wa.replace(/\D/g, '')}@sk5.app`;
         const getSafeChurchId = (name) => name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+
+        // FITUR BARU: Memuat Daftar Gereja dari Database
+        window.listenToChurches = () => {
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'churches'), (snap) => {
+                let churchList = [];
+                snap.forEach(doc => churchList.push({id: doc.id, ...doc.data()}));
+                
+                // Isi ke form pendaftaran
+                const select = document.getElementById('reg-church');
+                if (select) {
+                    const currentVal = select.value;
+                    select.innerHTML = '<option value="">Pilih Gereja Asal...</option>' + 
+                        churchList.map(c => `<option value="${c.name}">${c.name}</option>`).join('') +
+                        '<option value="Gereja Lainnya">Gereja Lainnya...</option>';
+                    select.value = currentVal;
+                }
+
+                // Isi ke daftar Admin Superadmin
+                const admList = document.getElementById('list-adm-churches');
+                if (admList) {
+                    admList.innerHTML = churchList.map(c => `
+                        <div class="surface p-3 rounded-lg border flex justify-between items-center shadow-sm">
+                            <span class="text-xs font-bold"><i class="fa-solid fa-church text-gray-400 mr-2"></i>${c.name}</span>
+                            <button onclick="window.deleteDocById('churches', '${c.id}')" class="text-red-500 bg-red-50 px-2 py-1 rounded"><i class="fa-solid fa-trash text-[10px]"></i></button>
+                        </div>
+                    `).join('') || '<p class="text-xs opacity-50">Belum ada gereja terdaftar.</p>';
+                }
+            });
+        };
+        
+        // Panggil saat aplikasi dimuat agar bisa dipakai saat pendaftaran
+        if(db) listenToChurches();
 
         if(auth) {
             onAuthStateChanged(auth, async (user) => {
@@ -768,17 +865,21 @@
             if(userData.role === 'admin' || userData.role === 'superadmin') {
                 document.getElementById('admin-panel-btn').classList.remove('hidden');
                 document.getElementById('admin-modal-subtitle').textContent = `Admin ${userData.role === 'superadmin' ? 'Global' : userData.church}`;
-                if(userData.role === 'superadmin') document.getElementById('tab-adm-global').classList.remove('hidden');
+                if(userData.role === 'superadmin') {
+                    document.getElementById('tab-adm-global').classList.remove('hidden');
+                    document.getElementById('tab-adm-churches').classList.remove('hidden');
+                }
                 listenToAllProfilesForAdmin();
             }
 
             // Initialize all real-time listeners for content
             listenToGlobals(); 
             listenToLocalChurch(userData.church); 
+            listenToPrayers(); // Fitur Baru
             listenToRides(); 
             listenToJastip();
-            listenToCares(); // New Feature
-            listenToBusinesses(); // New Feature
+            listenToCares(); 
+            listenToBusinesses(); 
         }
 
         function listenToGlobals() {
@@ -797,9 +898,26 @@
         function listenToLocalChurch(churchName) {
             onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'church_content', getSafeChurchId(churchName)), (docSnap) => {
                 let data = docSnap.exists() ? docSnap.data() : { announcements: [], schedules: [] }; localContentCache = data;
+                
+                // FITUR BARU: Render Media Khotbah
+                const khotbahContainer = document.getElementById('beranda-khotbah');
+                if(data.sermon) {
+                    khotbahContainer.innerHTML = `
+                        <div class="surface p-4 rounded-xl border border-gray-200 relative overflow-hidden shadow-sm">
+                            <h4 class="font-bold text-sm text-gray-800 mb-2">${data.sermon.title}</h4>
+                            ${data.sermon.yt ? `<div class="aspect-video w-full mb-3 rounded-lg overflow-hidden bg-black"><iframe src="${data.sermon.yt}" class="w-full h-full" frameborder="0" allowfullscreen></iframe></div>` : ''}
+                            ${data.sermon.desc ? `<div class="text-[11px] opacity-90 leading-relaxed bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border whitespace-pre-wrap">${data.sermon.desc}</div>` : ''}
+                        </div>
+                    `;
+                    document.getElementById('section-khotbah').classList.remove('hidden');
+                } else {
+                    document.getElementById('section-khotbah').classList.add('hidden');
+                }
+
                 const ac = document.getElementById('beranda-local-announcements');
                 if(!data.announcements || data.announcements.length === 0) ac.innerHTML = '<p class="text-[11px] opacity-50 p-2 text-center bg-gray-50 rounded-lg">Belum ada info lokal.</p>';
-                else ac.innerHTML = data.announcements.map((a,i) => `<div class="surface p-4 rounded-xl border border-gray-200 relative"><h4 class="font-bold text-sm text-gray-800 mb-1">${a.title}</h4><p class="text-[11px] opacity-70 leading-relaxed">${a.desc}</p>${(userData.role==='admin' || userData.role==='superadmin') ? `<button onclick="window.delLocAnn(${i})" class="absolute top-2 right-2 text-red-400 bg-gray-100 rounded-full w-6 h-6 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>` : ''}</div>`).join('');
+                else ac.innerHTML = data.announcements.map((a,i) => `<div class="surface p-4 rounded-xl border border-gray-200 relative"><h4 class="font-bold text-sm text-gray-800 mb-1">${a.title}</h4><p class="text-[11px] opacity-70 leading-relaxed whitespace-pre-wrap">${a.desc}</p>${(userData.role==='admin' || userData.role==='superadmin') ? `<button onclick="window.delLocAnn(${i})" class="absolute top-2 right-2 text-red-400 bg-gray-100 rounded-full w-6 h-6 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>` : ''}</div>`).join('');
+                
                 const sc = document.getElementById('beranda-local-schedules');
                 if(!data.schedules || data.schedules.length === 0) sc.innerHTML = '<p class="text-[11px] opacity-50 p-2 text-center bg-gray-50 rounded-lg">Belum ada jadwal ibadah.</p>';
                 else sc.innerHTML = data.schedules.map((s,i) => `<div class="surface p-3 rounded-xl border-l-4 border-primary bg-gray-50 relative flex justify-between items-center shadow-sm"><div><h4 class="font-bold text-[13px]">${s.name}</h4><p class="text-[10px] opacity-70 mt-1"><i class="fa-regular fa-clock"></i> ${s.time} &nbsp; <i class="fa-solid fa-location-dot"></i> ${s.loc}</p></div>${(userData.role==='admin' || userData.role==='superadmin') ? `<button onclick="window.delLocSch(${i})" class="text-red-400 text-xs w-6 h-6 bg-red-100 rounded flex justify-center items-center"><i class="fa-solid fa-trash"></i></button>` : ''}</div>`).join('');
@@ -823,11 +941,112 @@
         window.saveGlobalVerse = async () => { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'globals', 'content'), { verse: document.getElementById('adm-glob-verse').value, ref: document.getElementById('adm-glob-ref').value }, { merge: true }); window.uiShowToast("Renungan disimpan"); };
         window.saveGlobalAnn = async () => { const title = document.getElementById('adm-glob-ann-title').value; const desc = document.getElementById('adm-glob-ann-desc').value; if(!title || !desc) return; let anns = globalContentCache?.announcements || []; anns.unshift({ title, desc }); await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'globals', 'content'), { announcements: anns }, { merge: true }); document.getElementById('adm-glob-ann-title').value = ''; document.getElementById('adm-glob-ann-desc').value = ''; window.uiShowToast("Pengumuman Global dikirim"); };
         window.delGlobAnn = async (idx) => { let anns = globalContentCache.announcements; anns.splice(idx, 1); await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'globals', 'content'), { announcements: anns }, { merge: true }); };
+        
+        // FITUR BARU: Admin Simpan Khotbah
+        window.saveLocalSermon = async () => { 
+            const title = document.getElementById('adm-loc-sermon-title').value; 
+            const yt = document.getElementById('adm-loc-sermon-yt').value; 
+            const desc = document.getElementById('adm-loc-sermon-desc').value; 
+            if(!title) return; 
+            
+            // Konversi link YouTube biasa ke mode embed
+            let embedUrl = yt;
+            if (yt.includes('youtube.com/watch?v=')) embedUrl = yt.replace('youtube.com/watch?v=', 'youtube.com/embed/').split('&')[0];
+            else if (yt.includes('youtu.be/')) embedUrl = yt.replace('youtu.be/', 'youtube.com/embed/').split('?')[0];
+
+            const sermon = { title, yt: embedUrl, desc }; 
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'church_content', getSafeChurchId(userData.church)), { sermon: sermon }, { merge: true }); 
+            window.uiShowToast("Khotbah lokal berhasil disimpan"); 
+        };
+
         window.saveLocalAnn = async () => { const title = document.getElementById('adm-loc-ann-title').value; const desc = document.getElementById('adm-loc-ann-desc').value; if(!title || !desc) return; let anns = localContentCache?.announcements || []; anns.unshift({ title, desc }); await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'church_content', getSafeChurchId(userData.church)), { announcements: anns }, { merge: true }); document.getElementById('adm-loc-ann-title').value = ''; document.getElementById('adm-loc-ann-desc').value = ''; window.uiShowToast("Info Lokal dikirim"); };
         window.delLocAnn = async (idx) => { let anns = localContentCache.announcements; anns.splice(idx, 1); await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'church_content', getSafeChurchId(userData.church)), { announcements: anns }, { merge: true }); };
         window.saveLocalSchedule = async () => { const name = document.getElementById('adm-loc-sch-name').value; const time = document.getElementById('adm-loc-sch-time').value; const loc = document.getElementById('adm-loc-sch-loc').value; if(!name || !time) return; let sch = localContentCache?.schedules || []; sch.push({ name, time, loc }); await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'church_content', getSafeChurchId(userData.church)), { schedules: sch }, { merge: true }); document.getElementById('adm-loc-sch-name').value = ''; document.getElementById('adm-loc-sch-time').value = ''; document.getElementById('adm-loc-sch-loc').value = ''; window.uiShowToast("Jadwal disimpan"); };
         window.delLocSch = async (idx) => { let sch = localContentCache.schedules; sch.splice(idx, 1); await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'church_content', getSafeChurchId(userData.church)), { schedules: sch }, { merge: true }); };
 
+        // FITUR BARU: Admin Simpan Gereja
+        window.saveNewChurch = async () => {
+            const name = document.getElementById('adm-new-church-name').value;
+            if (!name) return;
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'churches'), { name, createdAt: serverTimestamp() });
+            document.getElementById('adm-new-church-name').value = '';
+            window.uiShowToast("Gereja berhasil ditambahkan!");
+        };
+
+        // ==========================================
+        // FITUR BARU: PERMOHONAN DOA (PRAYER REQUEST)
+        // ==========================================
+        document.getElementById('form-add-prayer')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const isAnon = document.getElementById('prayer-anon').checked;
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'prayers'), {
+                target: document.getElementById('prayer-target').value,
+                content: document.getElementById('prayer-content').value,
+                isAnon: isAnon,
+                userName: isAnon ? 'Anonim' : userData.name,
+                userChurch: userData.church,
+                userUid: currentUser.uid,
+                supports: [], // Array untuk menampung UID yang memberi dukungan Amin
+                createdAt: serverTimestamp()
+            });
+            window.uiToggleModal('modal-add-prayer'); e.target.reset(); window.uiShowToast("Pokok Doa berhasil dibagikan.");
+        });
+
+        function listenToPrayers() {
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'prayers'), (snapshot) => {
+                let lokalPrayers = [];
+                let globalPrayers = [];
+                
+                snapshot.forEach(doc => {
+                    const data = { id: doc.id, ...doc.data() };
+                    if (data.target === 'global') globalPrayers.push(data);
+                    else if (data.target === 'lokal' && data.userChurch === userData.church) lokalPrayers.push(data);
+                });
+                
+                // Urutkan dari yang terbaru
+                lokalPrayers.sort((a,b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
+                globalPrayers.sort((a,b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
+
+                const renderPrayer = (p) => {
+                    const isSupported = p.supports && p.supports.includes(userData.uid);
+                    const supportCount = p.supports ? p.supports.length : 0;
+                    return `
+                    <div class="surface p-4 rounded-xl border border-gray-200 shadow-sm relative">
+                        ${(p.userUid === userData?.uid || userData?.role === 'superadmin') ? `<button onclick="window.deleteDocById('prayers', '${p.id}')" class="absolute top-2 right-2 text-red-400 bg-red-50 rounded-full w-6 h-6 flex justify-center items-center"><i class="fa-solid fa-trash text-xs"></i></button>` : ''}
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-full ${p.isAnon ? 'bg-gray-200 text-gray-500' : 'bg-purple-100 text-purple-600'} flex items-center justify-center font-bold text-xs">
+                                ${p.isAnon ? '<i class="fa-solid fa-user-secret"></i>' : p.userName.charAt(0)}
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xs">${p.userName}</h4>
+                                <p class="text-[9px] opacity-70">${p.isAnon ? 'Jemaat' : p.userChurch}</p>
+                            </div>
+                        </div>
+                        <p class="text-sm opacity-90 leading-relaxed mb-3 bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg whitespace-pre-wrap">"${p.content}"</p>
+                        <div class="flex items-center justify-between border-t border-gray-100 pt-3">
+                            <span class="text-[10px] font-bold text-gray-500">${supportCount} orang mendoakan</span>
+                            <button onclick="window.togglePrayerSupport('${p.id}', ${isSupported})" class="px-3 py-1.5 rounded-full text-[11px] font-bold transition flex items-center gap-1 ${isSupported ? 'bg-purple-600 text-white shadow-md' : 'bg-gray-100 text-gray-600'}">
+                                <i class="fa-solid fa-hands-praying"></i> ${isSupported ? 'Amin! (Batal)' : 'Dukung Doa / Amin'}
+                            </button>
+                        </div>
+                    </div>`;
+                };
+
+                document.getElementById('view-doa-lokal').innerHTML = lokalPrayers.length ? lokalPrayers.map(renderPrayer).join('') : '<p class="text-center opacity-50 text-xs py-4">Belum ada pokok doa di gereja lokal Anda.</p>';
+                document.getElementById('view-doa-global').innerHTML = globalPrayers.length ? globalPrayers.map(renderPrayer).join('') : '<p class="text-center opacity-50 text-xs py-4">Belum ada pokok doa global.</p>';
+            });
+        }
+
+        window.togglePrayerSupport = async (prayerId, isSupported) => {
+            const ref = doc(db, 'artifacts', appId, 'public', 'data', 'prayers', prayerId);
+            if (isSupported) await updateDoc(ref, { supports: arrayRemove(userData.uid) });
+            else await updateDoc(ref, { supports: arrayUnion(userData.uid) });
+        };
+
+
+        // ==========================================
+        // FITUR TRANSPORTASI
+        // ==========================================
         document.getElementById('form-offer-ride')?.addEventListener('submit', async (e) => { 
             e.preventDefault(); 
             const typeSvc = document.getElementById('offer-type').value;
@@ -890,7 +1109,9 @@
             });
         }
 
-        // NEW FEATURE: Jasa Asuh
+        // ==========================================
+        // FITUR JASA ASUH / RAWAT
+        // ==========================================
         document.getElementById('form-offer-asuh')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             const typeSvc = document.getElementById('o-asuh-type').value;
@@ -961,7 +1182,9 @@
             });
         }
 
-        // NEW FEATURE: Usaha Jemaat (Business)
+        // ==========================================
+        // FITUR USAHA & JASTIP
+        // ==========================================
         document.getElementById('form-add-food')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'businesses'), { type: 'food', name: document.getElementById('food-name').value, price: document.getElementById('food-price').value, system: document.getElementById('food-system').value, time: document.getElementById('food-time').value, desc: document.getElementById('food-desc').value, userName: userData.name, userChurch: userData.church, userWa: userData.wa, userUid: currentUser.uid, createdAt: serverTimestamp() });
