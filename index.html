@@ -206,7 +206,7 @@
                     </div>
                 </div>
 
-                <!-- FITUR BARU: PAGE DOA -->
+                <!-- PAGE DOA -->
                 <div id="page-doa" class="page-section hidden space-y-4">
                     <div class="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 p-4 rounded-xl flex items-center gap-4">
                         <div class="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-800 text-purple-600 dark:text-purple-300 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-hands-praying"></i></div>
@@ -356,7 +356,7 @@
                 </div>
             </main>
 
-            <!-- NAV BOTTOM (Kini berisi 6 Menu yang dipadatkan) -->
+            <!-- NAV BOTTOM -->
             <nav class="absolute bottom-0 w-full h-[70px] glass-nav flex justify-around items-center px-1 z-50 rounded-b-lg">
                 <button onclick="window.uiNav('beranda')" class="nav-btn active-nav flex-1 flex flex-col items-center justify-center gap-1 text-primary transition">
                     <i class="fa-solid fa-house text-[17px] mb-0.5"></i><span class="text-[9px] font-bold">Beranda</span>
@@ -381,7 +381,7 @@
 
         <!-- === MODALS === -->
         
-        <!-- Modal Pokok Doa (FITUR BARU) -->
+        <!-- Modal Pokok Doa -->
         <div id="modal-add-prayer" class="absolute inset-0 bg-black/60 z-[70] hidden flex-col justify-end backdrop-blur-sm">
             <div class="surface rounded-t-3xl p-6 w-full animate-slide-up h-[80vh] overflow-y-auto">
                 <div class="flex justify-between items-center mb-5"><h3 class="font-bold text-lg"><i class="fa-solid fa-hands-praying text-purple-500 mr-2"></i>Bagikan Pokok Doa</h3><button onclick="window.uiToggleModal('modal-add-prayer')" class="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full"><i class="fa-solid fa-xmark"></i></button></div>
@@ -406,7 +406,7 @@
             </div>
         </div>
 
-        <!-- Modal Admin (DIPERBARUI) -->
+        <!-- Modal Admin -->
         <div id="modal-admin" class="absolute inset-0 bg-black/60 z-[70] hidden flex-col justify-end backdrop-blur-sm">
             <div class="surface rounded-t-3xl p-6 h-[90vh] overflow-y-auto w-full animate-slide-up flex flex-col">
                 <div class="flex justify-between items-center mb-4">
@@ -423,7 +423,6 @@
                     <div id="view-adm-users" class="space-y-3"><p class="text-[11px] opacity-70 mb-2">Daftar anggota yang menunggu disetujui.</p><div id="admin-pending-users-list" class="space-y-3"></div></div>
                     
                     <div id="view-adm-local" class="hidden space-y-4">
-                        <!-- FITUR BARU: ADMIN KHOTBAH -->
                         <div class="p-4 rounded-xl border border-red-200 bg-red-50 dark:bg-red-900/10">
                             <h4 class="font-bold text-sm mb-2 text-red-700">Media & Khotbah Mingguan</h4>
                             <input type="text" id="adm-loc-sermon-title" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Judul Khotbah (Wajib)">
@@ -441,7 +440,6 @@
                         <div class="p-4 rounded-xl border border-red-200 bg-red-50 dark:bg-red-900/10"><h4 class="font-bold text-sm mb-2">Pengumuman Global</h4><input type="text" id="adm-glob-ann-title" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Judul"><textarea id="adm-glob-ann-desc" rows="2" class="w-full p-2.5 rounded-lg border bg-white dark:bg-gray-800 text-xs mb-2" placeholder="Isi..."></textarea><button onclick="window.saveGlobalAnn()" class="bg-red-600 text-white font-bold py-2 px-4 rounded-lg text-xs w-full">Siarkan Global</button></div>
                     </div>
 
-                    <!-- FITUR BARU: ADMIN GEREJA (Khusus Superadmin) -->
                     <div id="view-adm-churches" class="hidden space-y-4">
                         <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50 dark:bg-emerald-900/10">
                             <h4 class="font-bold text-sm mb-2 text-emerald-800">Tambah Gereja Baru ke Sistem</h4>
@@ -477,6 +475,15 @@
                         <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Sisa Kursi</label><input type="number" id="offer-seats" required min="1" max="6" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-center text-sm"></div>
                         <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Jam Jalan</label><input type="time" id="offer-time" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm"></div>
                     </div>
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase text-indigo-600"><i class="fa-solid fa-earth-asia"></i> Jangkauan Posting</label>
+                        <select id="offer-scope" class="w-full p-3 rounded-xl border border-indigo-200 bg-indigo-50 dark:bg-indigo-900/10 text-sm focus:border-indigo-500">
+                            <option value="kota">Hanya Kota/Kab Saya</option>
+                            <option value="kelurahan">Hanya Kelurahan Saya</option>
+                            <option value="gereja">Hanya Gereja Lokal Saya</option>
+                            <option value="nasional">Seluruh Indonesia</option>
+                        </select>
+                    </div>
                     <button type="submit" class="w-full bg-primary text-white font-bold py-3.5 rounded-xl shadow-lg mt-2 text-sm">Posting Kendaraan (+10 Poin)</button>
                 </form>
             </div>
@@ -501,6 +508,15 @@
                     <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Tujuan</label><input type="text" id="req-dest" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm"></div>
                     <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Titik Tunggu (Patokan)</label><input type="text" id="req-location" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm"></div>
                     <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Jumlah Orang</label><input type="number" id="req-people" required min="1" max="4" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" value="1"></div>
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase text-indigo-600"><i class="fa-solid fa-earth-asia"></i> Jangkauan Posting</label>
+                        <select id="req-scope" class="w-full p-3 rounded-xl border border-indigo-200 bg-indigo-50 dark:bg-indigo-900/10 text-sm focus:border-indigo-500">
+                            <option value="kota">Hanya Kota/Kab Saya</option>
+                            <option value="kelurahan">Hanya Kelurahan Saya</option>
+                            <option value="gereja">Hanya Gereja Lokal Saya</option>
+                            <option value="nasional">Seluruh Indonesia</option>
+                        </select>
+                    </div>
                     <button type="submit" class="w-full border-2 border-primary text-primary font-bold py-3.5 rounded-xl mt-2 text-sm">Kirim Permintaan</button>
                 </form>
             </div>
@@ -534,6 +550,15 @@
                     </div>
                     <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Ketersediaan Waktu / Jadwal</label><input type="text" id="o-asuh-time" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Cth: Sabtu-Minggu, atau Malam Hari"></div>
                     <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Keterangan / Pengalaman</label><textarea id="o-asuh-desc" required rows="2" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Ceritakan sedikit pengalaman Anda..."></textarea></div>
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase text-indigo-600"><i class="fa-solid fa-earth-asia"></i> Jangkauan Posting</label>
+                        <select id="o-asuh-scope" class="w-full p-3 rounded-xl border border-indigo-200 bg-indigo-50 dark:bg-indigo-900/10 text-sm focus:border-indigo-500">
+                            <option value="kota">Hanya Kota/Kab Saya</option>
+                            <option value="kelurahan">Hanya Kelurahan Saya</option>
+                            <option value="gereja">Hanya Gereja Lokal Saya</option>
+                            <option value="nasional">Seluruh Indonesia</option>
+                        </select>
+                    </div>
                     <button type="submit" class="w-full bg-rose-500 text-white font-bold py-3.5 rounded-xl shadow-lg mt-2 text-sm">Posting Jasa (+15 Poin)</button>
                 </form>
             </div>
@@ -567,6 +592,15 @@
                     </div>
                     <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Kapan Dibutuhkan?</label><input type="text" id="r-asuh-time" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Cth: Besok pagi jam 08:00 - 12:00"></div>
                     <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Detail Kebutuhan (Lokasi/Kondisi)</label><textarea id="r-asuh-desc" required rows="2" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Mohon jelaskan secara rinci..."></textarea></div>
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase text-indigo-600"><i class="fa-solid fa-earth-asia"></i> Jangkauan Posting</label>
+                        <select id="r-asuh-scope" class="w-full p-3 rounded-xl border border-indigo-200 bg-indigo-50 dark:bg-indigo-900/10 text-sm focus:border-indigo-500">
+                            <option value="kota">Hanya Kota/Kab Saya</option>
+                            <option value="kelurahan">Hanya Kelurahan Saya</option>
+                            <option value="gereja">Hanya Gereja Lokal Saya</option>
+                            <option value="nasional">Seluruh Indonesia</option>
+                        </select>
+                    </div>
                     <button type="submit" class="w-full border-2 border-rose-500 text-rose-500 font-bold py-3.5 rounded-xl mt-2 text-sm">Kirim Permintaan Bantuan</button>
                 </form>
             </div>
@@ -588,6 +622,15 @@
                     </div>
                     <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Batas Waktu PO / Jadwal Pengiriman</label><input type="text" id="food-time" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Cth: PO tutup Kamis, Kirim Sabtu"></div>
                     <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Deskripsi & Cara Pengambilan</label><textarea id="food-desc" required rows="2" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Jelaskan isi makanan dan lokasi ambil..."></textarea></div>
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase text-indigo-600"><i class="fa-solid fa-earth-asia"></i> Jangkauan Posting</label>
+                        <select id="food-scope" class="w-full p-3 rounded-xl border border-indigo-200 bg-indigo-50 dark:bg-indigo-900/10 text-sm focus:border-indigo-500">
+                            <option value="kota">Hanya Kota/Kab Saya</option>
+                            <option value="kelurahan">Hanya Kelurahan Saya</option>
+                            <option value="gereja">Hanya Gereja Lokal Saya</option>
+                            <option value="nasional">Seluruh Indonesia</option>
+                        </select>
+                    </div>
                     <button type="submit" class="w-full bg-amber-500 text-white font-bold py-3.5 rounded-xl shadow-lg mt-2 text-sm">Promosikan Makanan (+10 Poin)</button>
                 </form>
             </div>
@@ -602,6 +645,16 @@
                     <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Estimasi Biaya / Tarif</label><input type="text" id="svc-price" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Cth: Mulai Rp 50rb atau Sesuai Kesepakatan"></div>
                     <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Deskripsi Layanan & Pengalaman</label><textarea id="svc-desc" required rows="3" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Jelaskan detail jasa yang Anda tawarkan..."></textarea></div>
                     <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Link Portofolio / Instagram (Opsional)</label><input type="url" id="svc-link" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="https://..."></div>
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase text-indigo-600"><i class="fa-solid fa-earth-asia"></i> Jangkauan Posting</label>
+                        <select id="svc-scope" class="w-full p-3 rounded-xl border border-indigo-200 bg-indigo-50 dark:bg-indigo-900/10 text-sm focus:border-indigo-500">
+                            <!-- Bawaan Nasional khusus untuk Jasa karena seringkali Online -->
+                            <option value="nasional">Seluruh Indonesia (Global)</option>
+                            <option value="kota">Hanya Kota/Kab Saya</option>
+                            <option value="kelurahan">Hanya Kelurahan Saya</option>
+                            <option value="gereja">Hanya Gereja Lokal Saya</option>
+                        </select>
+                    </div>
                     <button type="submit" class="w-full bg-indigo-500 text-white font-bold py-3.5 rounded-xl shadow-lg mt-2 text-sm">Posting Jasa (+10 Poin)</button>
                 </form>
             </div>
@@ -619,6 +672,15 @@
                     </div>
                     <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Batas Waktu (Deadline)</label><input type="datetime-local" id="jastip-deadline" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm"></div>
                     <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Keterangan Tambahan</label><textarea id="jastip-desc" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" rows="2"></textarea></div>
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase text-indigo-600"><i class="fa-solid fa-earth-asia"></i> Jangkauan Posting</label>
+                        <select id="jastip-scope" class="w-full p-3 rounded-xl border border-indigo-200 bg-indigo-50 dark:bg-indigo-900/10 text-sm focus:border-indigo-500">
+                            <option value="kota">Hanya Kota/Kab Saya</option>
+                            <option value="kelurahan">Hanya Kelurahan Saya</option>
+                            <option value="gereja">Hanya Gereja Lokal Saya</option>
+                            <option value="nasional">Seluruh Indonesia</option>
+                        </select>
+                    </div>
                     <button type="submit" class="w-full bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-lg mt-2 text-sm">Buka Jastip (+15 Poin)</button>
                 </form>
             </div>
@@ -747,12 +809,42 @@
         const getEmailFromWa = (wa) => `${wa.replace(/\D/g, '')}@sk5.app`;
         const getSafeChurchId = (name) => name.toLowerCase().replace(/[^a-z0-9]/g, '_');
 
+        // Fungsi Global untuk Menyaring Jangkauan (Scope Filter)
+        window.checkScope = (d) => {
+            if (!userData) return false;
+            
+            // Selalu tampilkan jika kita adalah pembuatnya, terlepas dari filter
+            const ownerUid = d.userUid || d.driverUid || d.passUid || d.openerUid;
+            if (ownerUid === userData.uid) return true;
+            
+            // Superadmin bisa melihat semua (opsional, berguna untuk moderasi)
+            if (userData.role === 'superadmin') return true;
+            
+            // Logika Penyaringan
+            if (!d.scope || d.scope === 'nasional') return true; // Nasional terlihat oleh semua
+            if (d.scope === 'kota' && d.userKota === userData.kota) return true;
+            if (d.scope === 'kelurahan' && d.userKel === userData.kel) return true;
+            
+            const church = d.userChurch || d.driverChurch || d.passChurch || d.openerChurch;
+            if (d.scope === 'gereja' && church === userData.church) return true;
+            
+            return false;
+        };
+
+        // Fungsi Global untuk Mendapatkan Label Badge (Visual)
+        window.getScopeBadge = (d) => {
+            if (!d.scope || d.scope === 'nasional') return '<span class="text-[9px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded border border-blue-200 ml-1 inline-block mt-0.5"><i class="fa-solid fa-earth-asia"></i> Nasional</span>';
+            if (d.scope === 'kota') return `<span class="text-[9px] bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded border border-orange-200 ml-1 inline-block mt-0.5"><i class="fa-solid fa-city"></i> ${d.userKota || 'Kota'}</span>`;
+            if (d.scope === 'kelurahan') return `<span class="text-[9px] bg-teal-50 text-teal-600 px-1.5 py-0.5 rounded border border-teal-200 ml-1 inline-block mt-0.5"><i class="fa-solid fa-map-pin"></i> Kel. ${d.userKel || 'Lokal'}</span>`;
+            if (d.scope === 'gereja') return `<span class="text-[9px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded border border-purple-200 ml-1 inline-block mt-0.5"><i class="fa-solid fa-church"></i> Gereja Lokal</span>`;
+            return '';
+        };
+
         let unsubscribeChurches = null;
         
         window.listenToChurches = () => {
             if (unsubscribeChurches) unsubscribeChurches();
             
-            // Fallback default supaya tidak pernah kosong
             const defaultChurches = ["GPdI Cipondoh Makmur Tangerang", "GBI Bukit Sion Mlaten Gempol", "GPdI Jajag Banyuwangi"];
             
             unsubscribeChurches = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'churches'), (snap) => {
@@ -762,7 +854,6 @@
                     if(!defaultChurches.includes(data.name)) churchList.push({id: doc.id, name: data.name});
                 });
                 
-                // Isi ke form pendaftaran
                 const select = document.getElementById('reg-church');
                 if (select) {
                     const currentVal = select.value;
@@ -774,7 +865,6 @@
                     if(currentVal && html.includes(`value="${currentVal}"`)) select.value = currentVal;
                 }
 
-                // Isi ke daftar Admin Superadmin
                 const admList = document.getElementById('list-adm-churches');
                 if (admList) {
                     let admHtml = '';
@@ -804,7 +894,6 @@
         if(auth) {
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
-                    // Panggil listen gereja ketika sudah ada izin baca (baik anonim maupun tidak)
                     window.listenToChurches();
                     
                     if (!user.isAnonymous) {
@@ -812,7 +901,6 @@
                         document.getElementById('auth-screen').classList.add('hidden');
                         listenToMyProfile();
                     } else {
-                        // Jika anonim (hanya numpang baca data), tetap di halaman login
                         document.getElementById('main-app').classList.add('hidden');
                         document.getElementById('pending-screen').classList.add('hidden');
                         document.getElementById('auth-screen').classList.remove('hidden');
@@ -821,8 +909,6 @@
                     document.getElementById('main-app').classList.add('hidden');
                     document.getElementById('pending-screen').classList.add('hidden');
                     document.getElementById('auth-screen').classList.remove('hidden');
-                    
-                    // Lakukan login anonim otomatis untuk membaca data daftar gereja (pendaftaran)
                     try { await signInAnonymously(auth); } catch(e) { console.error("Anon Login Error:", e); }
                 }
             });
@@ -854,7 +940,6 @@
                 document.getElementById('btn-register').textContent = "Mendaftarkan...";
                 let initRole = 'user'; let initStatus = 'pending';
 
-                // createUserWithEmailAndPassword otomatis menimpa sesi anonim sebelumnya
                 const cred = await createUserWithEmailAndPassword(auth, getEmailFromWa(wa), pass);
                 await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', cred.user.uid), {
                     name, wa, area, church, role: initRole, status: initStatus, points: 0,
@@ -908,7 +993,6 @@
                 listenToAllProfilesForAdmin();
             }
 
-            // Initialize all real-time listeners for content
             listenToGlobals(); 
             listenToLocalChurch(userData.church); 
             listenToPrayers(); 
@@ -977,14 +1061,12 @@
         window.saveGlobalAnn = async () => { const title = document.getElementById('adm-glob-ann-title').value; const desc = document.getElementById('adm-glob-ann-desc').value; if(!title || !desc) return; let anns = globalContentCache?.announcements || []; anns.unshift({ title, desc }); await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'globals', 'content'), { announcements: anns }, { merge: true }); document.getElementById('adm-glob-ann-title').value = ''; document.getElementById('adm-glob-ann-desc').value = ''; window.uiShowToast("Pengumuman Global dikirim"); };
         window.delGlobAnn = async (idx) => { let anns = globalContentCache.announcements; anns.splice(idx, 1); await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'globals', 'content'), { announcements: anns }, { merge: true }); };
         
-        // FITUR BARU: Admin Simpan Khotbah
         window.saveLocalSermon = async () => { 
             const title = document.getElementById('adm-loc-sermon-title').value; 
             const yt = document.getElementById('adm-loc-sermon-yt').value; 
             const desc = document.getElementById('adm-loc-sermon-desc').value; 
             if(!title) return; 
             
-            // Konversi link YouTube biasa ke mode embed
             let embedUrl = yt;
             if (yt.includes('youtube.com/watch?v=')) embedUrl = yt.replace('youtube.com/watch?v=', 'youtube.com/embed/').split('&')[0];
             else if (yt.includes('youtu.be/')) embedUrl = yt.replace('youtu.be/', 'youtube.com/embed/').split('?')[0];
@@ -999,7 +1081,6 @@
         window.saveLocalSchedule = async () => { const name = document.getElementById('adm-loc-sch-name').value; const time = document.getElementById('adm-loc-sch-time').value; const loc = document.getElementById('adm-loc-sch-loc').value; if(!name || !time) return; let sch = localContentCache?.schedules || []; sch.push({ name, time, loc }); await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'church_content', getSafeChurchId(userData.church)), { schedules: sch }, { merge: true }); document.getElementById('adm-loc-sch-name').value = ''; document.getElementById('adm-loc-sch-time').value = ''; document.getElementById('adm-loc-sch-loc').value = ''; window.uiShowToast("Jadwal disimpan"); };
         window.delLocSch = async (idx) => { let sch = localContentCache.schedules; sch.splice(idx, 1); await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'church_content', getSafeChurchId(userData.church)), { schedules: sch }, { merge: true }); };
 
-        // FITUR BARU: Admin Simpan Gereja
         window.saveNewChurch = async () => {
             const name = document.getElementById('adm-new-church-name').value;
             if (!name) return;
@@ -1013,7 +1094,7 @@
         };
 
         // ==========================================
-        // FITUR BARU: PERMOHONAN DOA (PRAYER REQUEST)
+        // FITUR PERMOHONAN DOA
         // ==========================================
         document.getElementById('form-add-prayer')?.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -1025,7 +1106,7 @@
                 userName: isAnon ? 'Anonim' : userData.name,
                 userChurch: userData.church,
                 userUid: currentUser.uid,
-                supports: [], // Array untuk menampung UID yang memberi dukungan Amin
+                supports: [], 
                 createdAt: serverTimestamp()
             });
             window.uiToggleModal('modal-add-prayer'); e.target.reset(); window.uiShowToast("Pokok Doa berhasil dibagikan.");
@@ -1033,16 +1114,13 @@
 
         function listenToPrayers() {
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'prayers'), (snapshot) => {
-                let lokalPrayers = [];
-                let globalPrayers = [];
-                
+                let lokalPrayers = []; let globalPrayers = [];
                 snapshot.forEach(doc => {
                     const data = { id: doc.id, ...doc.data() };
                     if (data.target === 'global') globalPrayers.push(data);
                     else if (data.target === 'lokal' && data.userChurch === userData.church) lokalPrayers.push(data);
                 });
                 
-                // Urutkan dari yang terbaru
                 lokalPrayers.sort((a,b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
                 globalPrayers.sort((a,b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
 
@@ -1090,22 +1168,42 @@
             e.preventDefault(); 
             const typeSvc = document.getElementById('offer-type').value;
             const tariff = typeSvc === 'berbayar' ? document.getElementById('offer-tariff').value : 'Gratis';
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'rides'), { type: 'offer', svcType: typeSvc, tariff: tariff, driverName: userData.name, driverChurch: userData.church, driverWa: userData.wa, driverUid: currentUser.uid, dest: document.getElementById('offer-dest').value, route: document.getElementById('offer-route').value, seats: parseInt(document.getElementById('offer-seats').value), time: document.getElementById('offer-time').value, status: 'active', createdAt: serverTimestamp() }); 
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', currentUser.uid), { points: (userData.points || 0) + 10 }); window.uiToggleModal('modal-offer-transport'); e.target.reset(); window.toggleTariff('offer'); window.uiShowToast("Kendaraan ditawarkan! (+10 Poin)"); 
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'rides'), { 
+                type: 'offer', svcType: typeSvc, tariff: tariff, 
+                driverName: userData.name, driverChurch: userData.church, driverWa: userData.wa, driverUid: currentUser.uid, 
+                dest: document.getElementById('offer-dest').value, route: document.getElementById('offer-route').value, 
+                seats: parseInt(document.getElementById('offer-seats').value), time: document.getElementById('offer-time').value, 
+                status: 'active', createdAt: serverTimestamp(),
+                scope: document.getElementById('offer-scope').value, userKel: userData.kel, userKota: userData.kota, userChurch: userData.church
+            }); 
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', currentUser.uid), { points: (userData.points || 0) + 10 }); 
+            window.uiToggleModal('modal-offer-transport'); e.target.reset(); window.toggleTariff('offer'); window.uiShowToast("Kendaraan ditawarkan! (+10 Poin)"); 
         });
         
         document.getElementById('form-req-ride')?.addEventListener('submit', async (e) => { 
             e.preventDefault(); 
             const typeSvc = document.getElementById('req-type').value;
             const tariff = typeSvc === 'berbayar' ? document.getElementById('req-tariff').value : 'Gratis';
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'rides'), { type: 'request', svcType: typeSvc, tariff: tariff, passName: userData.name, passChurch: userData.church, passWa: userData.wa, passUid: currentUser.uid, dest: document.getElementById('req-dest').value, location: document.getElementById('req-location').value, people: parseInt(document.getElementById('req-people').value), status: 'active', createdAt: serverTimestamp() }); 
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'rides'), { 
+                type: 'request', svcType: typeSvc, tariff: tariff, 
+                passName: userData.name, passChurch: userData.church, passWa: userData.wa, passUid: currentUser.uid, 
+                dest: document.getElementById('req-dest').value, location: document.getElementById('req-location').value, 
+                people: parseInt(document.getElementById('req-people').value), status: 'active', createdAt: serverTimestamp(),
+                scope: document.getElementById('req-scope').value, userKel: userData.kel, userKota: userData.kota, userChurch: userData.church
+            }); 
             window.uiToggleModal('modal-req-transport'); e.target.reset(); window.toggleTariff('req'); window.uiShowToast("Permintaan jemputan dikirim!"); 
         });
         
         function listenToRides() {
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'rides'), (snapshot) => {
                 const offers = []; const requests = [];
-                snapshot.forEach(doc => { const d = { id: doc.id, ...doc.data() }; if (d.status === 'active') d.type === 'offer' ? offers.push(d) : requests.push(d); });
+                snapshot.forEach(doc => { 
+                    const d = { id: doc.id, ...doc.data() }; 
+                    if (d.status === 'active' && window.checkScope(d)) {
+                        d.type === 'offer' ? offers.push(d) : requests.push(d); 
+                    }
+                });
+                
                 document.getElementById('list-available-rides').innerHTML = offers.length ? offers.map(o => `
                     <div class="surface p-4 rounded-xl border relative shadow-sm border-l-4 ${o.svcType === 'berbayar' ? 'border-l-orange-400' : 'border-l-green-400'}">
                         <div class="absolute top-0 right-0 ${o.svcType === 'berbayar' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'} text-[9px] font-bold px-2 py-1 rounded-bl-lg">
@@ -1114,7 +1212,7 @@
                         <div class="flex gap-3 mt-2">
                             <div class="w-10 h-10 rounded-lg bg-gray-100 text-gray-700 flex items-center justify-center font-bold">${o.driverName.charAt(0)}</div>
                             <div class="flex-1">
-                                <h4 class="font-bold text-sm">${o.driverName} <span class="text-[9px] bg-gray-100 px-1 rounded">${o.driverChurch}</span></h4>
+                                <h4 class="font-bold text-sm leading-tight mb-1">${o.driverName} <span class="text-[9px] bg-gray-100 px-1 rounded">${o.driverChurch}</span><br/>${window.getScopeBadge(o)}</h4>
                                 <p class="font-bold text-primary text-sm mb-1 line-clamp-1">${o.dest}</p>
                                 <p class="text-[10px] opacity-70 mb-1">Lewat: ${o.route} • Jam: ${o.time}</p>
                                 <p class="text-[10px] font-bold ${o.svcType === 'berbayar' ? 'text-orange-500' : 'text-green-500'}">Tarif: ${o.tariff} | Sisa ${o.seats} Kursi</p>
@@ -1134,7 +1232,7 @@
                         <div class="flex gap-3 mt-2">
                             <div class="w-10 h-10 rounded-lg bg-gray-100 text-gray-500 flex items-center justify-center font-bold">${r.passName.charAt(0)}</div>
                             <div class="flex-1">
-                                <h4 class="font-bold text-sm">${r.passName} <span class="text-[9px] bg-gray-100 px-1 rounded">${r.passChurch}</span></h4>
+                                <h4 class="font-bold text-sm leading-tight mb-1">${r.passName} <span class="text-[9px] bg-gray-100 px-1 rounded">${r.passChurch}</span><br/>${window.getScopeBadge(r)}</h4>
                                 <p class="text-xs text-gray-700 mt-1">Ingin ke: <span class="font-bold">${r.dest}</span></p>
                                 <p class="text-[10px] text-red-500 font-medium mt-1"><i class="fa-solid fa-location-dot"></i> Tunggu di: ${r.location} (${r.people} Org)</p>
                                 <p class="text-[10px] font-bold ${r.svcType === 'berbayar' ? 'text-orange-500' : 'text-green-500'} mt-1">Tawaran: ${r.tariff}</p>
@@ -1155,22 +1253,38 @@
             e.preventDefault();
             const typeSvc = document.getElementById('o-asuh-type').value;
             const tariff = typeSvc === 'berbayar' ? document.getElementById('o-asuh-tariff').value : 'Relawan (Gratis)';
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'cares'), { type: 'offer', category: document.getElementById('o-asuh-cat').value, svcType: typeSvc, tariff: tariff, time: document.getElementById('o-asuh-time').value, desc: document.getElementById('o-asuh-desc').value, userName: userData.name, userChurch: userData.church, userWa: userData.wa, userUid: currentUser.uid, createdAt: serverTimestamp() });
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', currentUser.uid), { points: (userData.points || 0) + 15 }); window.uiToggleModal('modal-offer-asuh'); e.target.reset(); window.toggleTariffAsuh('offer'); window.uiShowToast("Jasa Asuh ditawarkan! (+15 Poin)");
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'cares'), { 
+                type: 'offer', category: document.getElementById('o-asuh-cat').value, svcType: typeSvc, tariff: tariff, 
+                time: document.getElementById('o-asuh-time').value, desc: document.getElementById('o-asuh-desc').value, 
+                userName: userData.name, userChurch: userData.church, userWa: userData.wa, userUid: currentUser.uid, createdAt: serverTimestamp(),
+                scope: document.getElementById('o-asuh-scope').value, userKel: userData.kel, userKota: userData.kota, userChurch: userData.church
+            });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', currentUser.uid), { points: (userData.points || 0) + 15 }); 
+            window.uiToggleModal('modal-offer-asuh'); e.target.reset(); window.toggleTariffAsuh('offer'); window.uiShowToast("Jasa Asuh ditawarkan! (+15 Poin)");
         });
 
         document.getElementById('form-req-asuh')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             const typeSvc = document.getElementById('r-asuh-type').value;
             const tariff = typeSvc === 'berbayar' ? document.getElementById('r-asuh-tariff').value : 'Mohon Bantuan Sukarela';
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'cares'), { type: 'request', category: document.getElementById('r-asuh-cat').value, svcType: typeSvc, tariff: tariff, time: document.getElementById('r-asuh-time').value, desc: document.getElementById('r-asuh-desc').value, userName: userData.name, userChurch: userData.church, userWa: userData.wa, userUid: currentUser.uid, createdAt: serverTimestamp() });
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'cares'), { 
+                type: 'request', category: document.getElementById('r-asuh-cat').value, svcType: typeSvc, tariff: tariff, 
+                time: document.getElementById('r-asuh-time').value, desc: document.getElementById('r-asuh-desc').value, 
+                userName: userData.name, userChurch: userData.church, userWa: userData.wa, userUid: currentUser.uid, createdAt: serverTimestamp(),
+                scope: document.getElementById('r-asuh-scope').value, userKel: userData.kel, userKota: userData.kota, userChurch: userData.church
+            });
             window.uiToggleModal('modal-req-asuh'); e.target.reset(); window.toggleTariffAsuh('req'); window.uiShowToast("Permintaan bantuan dikirim!");
         });
 
         function listenToCares() {
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'cares'), (snapshot) => {
                 const offers = []; const requests = [];
-                snapshot.forEach(doc => { const d = { id: doc.id, ...doc.data() }; d.type === 'offer' ? offers.push(d) : requests.push(d); });
+                snapshot.forEach(doc => { 
+                    const d = { id: doc.id, ...doc.data() }; 
+                    if (window.checkScope(d)) {
+                        d.type === 'offer' ? offers.push(d) : requests.push(d); 
+                    }
+                });
                 
                 const getIcon = (cat) => {
                     const icons = { 'Lansia':'fa-person-cane', 'Anak':'fa-children', 'Orang Sakit':'fa-bed-pulse', 'Hewan':'fa-paw', 'Rumah':'fa-house-chimney' };
@@ -1189,9 +1303,9 @@
                         <div class="flex items-center justify-between mt-2 pt-2 border-t">
                             <div class="flex items-center gap-2">
                                 <div class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-[10px] font-bold">${o.userName.charAt(0)}</div>
-                                <div class="text-[9px]"><span class="font-bold block">${o.userName}</span><span class="opacity-70">${o.userChurch}</span></div>
+                                <div class="text-[9px]"><span class="font-bold block">${o.userName}</span><span class="opacity-70">${o.userChurch}</span> ${window.getScopeBadge(o)}</div>
                             </div>
-                            <div class="flex gap-2">
+                            <div class="flex gap-2 items-center">
                                 ${(o.userUid === userData?.uid || userData?.role === 'superadmin') ? `<button onclick="window.deleteDocById('cares', '${o.id}')" class="text-red-400 text-xs px-2 py-1 bg-red-50 rounded"><i class="fa-solid fa-trash"></i></button>` : ''}
                                 <a href="${getWaLink(o.userWa, `Syalom ${o.userName}, saya butuh jasa asuh/rawat ${o.category} yang Anda tawarkan di Sahabat Kristus.`)}" target="_blank" class="bg-rose-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg shadow-sm">Hubungi WA</a>
                             </div>
@@ -1210,9 +1324,9 @@
                         <div class="flex items-center justify-between mt-2 pt-2 border-t">
                             <div class="flex items-center gap-2">
                                 <div class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-[10px] font-bold">${r.userName.charAt(0)}</div>
-                                <div class="text-[9px]"><span class="font-bold block">${r.userName}</span><span class="opacity-70">${r.userChurch}</span></div>
+                                <div class="text-[9px]"><span class="font-bold block">${r.userName}</span><span class="opacity-70">${r.userChurch}</span> ${window.getScopeBadge(r)}</div>
                             </div>
-                            <div class="flex gap-2">
+                            <div class="flex gap-2 items-center">
                                 ${(r.userUid === userData?.uid || userData?.role === 'superadmin') ? `<button onclick="window.deleteDocById('cares', '${r.id}')" class="text-red-400 text-xs px-2 py-1 bg-red-50 rounded"><i class="fa-solid fa-trash"></i></button>` : ''}
                                 <a href="${getWaLink(r.userWa, `Syalom ${r.userName}, saya bersedia membantu menjaga ${r.category} Anda.`)}" target="_blank" class="bg-rose-100 text-rose-600 border border-rose-300 text-[10px] font-bold px-3 py-1.5 rounded-lg shadow-sm">Bantu Rawat</a>
                             </div>
@@ -1226,20 +1340,38 @@
         // ==========================================
         document.getElementById('form-add-food')?.addEventListener('submit', async (e) => {
             e.preventDefault();
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'businesses'), { type: 'food', name: document.getElementById('food-name').value, price: document.getElementById('food-price').value, system: document.getElementById('food-system').value, time: document.getElementById('food-time').value, desc: document.getElementById('food-desc').value, userName: userData.name, userChurch: userData.church, userWa: userData.wa, userUid: currentUser.uid, createdAt: serverTimestamp() });
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', currentUser.uid), { points: (userData.points || 0) + 10 }); window.uiToggleModal('modal-add-food'); e.target.reset(); window.uiShowToast("Makanan diposting! (+10 Poin)");
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'businesses'), { 
+                type: 'food', name: document.getElementById('food-name').value, price: document.getElementById('food-price').value, 
+                system: document.getElementById('food-system').value, time: document.getElementById('food-time').value, 
+                desc: document.getElementById('food-desc').value, userName: userData.name, userChurch: userData.church, 
+                userWa: userData.wa, userUid: currentUser.uid, createdAt: serverTimestamp(),
+                scope: document.getElementById('food-scope').value, userKel: userData.kel, userKota: userData.kota, userChurch: userData.church
+            });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', currentUser.uid), { points: (userData.points || 0) + 10 }); 
+            window.uiToggleModal('modal-add-food'); e.target.reset(); window.uiShowToast("Makanan diposting! (+10 Poin)");
         });
 
         document.getElementById('form-add-service')?.addEventListener('submit', async (e) => {
             e.preventDefault();
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'businesses'), { type: 'service', name: document.getElementById('svc-name').value, price: document.getElementById('svc-price').value, link: document.getElementById('svc-link').value, desc: document.getElementById('svc-desc').value, userName: userData.name, userChurch: userData.church, userWa: userData.wa, userUid: currentUser.uid, createdAt: serverTimestamp() });
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', currentUser.uid), { points: (userData.points || 0) + 10 }); window.uiToggleModal('modal-add-service'); e.target.reset(); window.uiShowToast("Jasa diposting! (+10 Poin)");
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'businesses'), { 
+                type: 'service', name: document.getElementById('svc-name').value, price: document.getElementById('svc-price').value, 
+                link: document.getElementById('svc-link').value, desc: document.getElementById('svc-desc').value, 
+                userName: userData.name, userChurch: userData.church, userWa: userData.wa, userUid: currentUser.uid, createdAt: serverTimestamp(),
+                scope: document.getElementById('svc-scope').value, userKel: userData.kel, userKota: userData.kota, userChurch: userData.church
+            });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', currentUser.uid), { points: (userData.points || 0) + 10 }); 
+            window.uiToggleModal('modal-add-service'); e.target.reset(); window.uiShowToast("Jasa diposting! (+10 Poin)");
         });
 
         function listenToBusinesses() {
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'businesses'), (snapshot) => {
                 const foods = []; const services = [];
-                snapshot.forEach(doc => { const d = { id: doc.id, ...doc.data() }; d.type === 'food' ? foods.push(d) : services.push(d); });
+                snapshot.forEach(doc => { 
+                    const d = { id: doc.id, ...doc.data() }; 
+                    if (window.checkScope(d)) {
+                        d.type === 'food' ? foods.push(d) : services.push(d); 
+                    }
+                });
                 
                 document.getElementById('list-foods').innerHTML = foods.length ? foods.map(f => `
                     <div class="surface p-4 rounded-xl border shadow-sm relative overflow-hidden">
@@ -1253,9 +1385,9 @@
                         <div class="flex items-center justify-between border-t pt-3">
                             <div class="flex items-center gap-2">
                                 <div class="w-7 h-7 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-[10px] font-bold"><i class="fa-solid fa-shop"></i></div>
-                                <div class="text-[9px]"><span class="font-bold block">${f.userName}</span><span class="opacity-70">${f.userChurch}</span></div>
+                                <div class="text-[9px]"><span class="font-bold block">${f.userName}</span><span class="opacity-70">${f.userChurch}</span> ${window.getScopeBadge(f)}</div>
                             </div>
-                            <div class="flex gap-2">
+                            <div class="flex gap-2 items-center">
                                 ${(f.userUid === userData?.uid || userData?.role === 'superadmin') ? `<button onclick="window.deleteDocById('businesses', '${f.id}')" class="text-red-400 text-xs px-2 py-1.5 bg-red-50 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : ''}
                                 <a href="${getWaLink(f.userWa, `Syalom ${f.userName}, saya ingin pesan ${f.name} yang dijual di Sahabat Kristus.`)}" target="_blank" class="bg-amber-500 hover:bg-amber-600 text-white text-[11px] font-bold px-4 py-2 rounded-lg shadow-sm transition">Pesan via WA</a>
                             </div>
@@ -1273,9 +1405,9 @@
                         <div class="flex items-center justify-between border-t pt-3">
                             <div class="flex items-center gap-2">
                                 <div class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-[10px] font-bold">${s.userName.charAt(0)}</div>
-                                <div class="text-[9px]"><span class="font-bold block">${s.userName}</span><span class="opacity-70">${s.userChurch}</span></div>
+                                <div class="text-[9px]"><span class="font-bold block">${s.userName}</span><span class="opacity-70">${s.userChurch}</span> ${window.getScopeBadge(s)}</div>
                             </div>
-                            <div class="flex gap-2">
+                            <div class="flex gap-2 items-center">
                                 ${s.link ? `<a href="${s.link}" target="_blank" class="bg-gray-100 text-gray-700 text-[10px] font-bold px-3 py-2 rounded-lg"><i class="fa-solid fa-link"></i> Info/Web</a>` : ''}
                                 <a href="${getWaLink(s.userWa, `Syalom ${s.userName}, saya tertarik menggunakan jasa profesi (${s.name}) Anda di Sahabat Kristus.`)}" target="_blank" class="bg-indigo-500 text-white text-[10px] font-bold px-3 py-2 rounded-lg shadow-sm">Kontak Jasa</a>
                             </div>
@@ -1287,13 +1419,26 @@
         document.getElementById('form-offer-jastip')?.addEventListener('submit', async (e) => { 
             e.preventDefault(); 
             const feeInput = document.getElementById('jastip-fee').value.trim(); const fee = feeInput === '' ? 'Gratis' : feeInput;
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'jastips'), { openerName: userData.name, openerChurch: userData.church, openerWa: userData.wa, openerUid: currentUser.uid, itemName: document.getElementById('jastip-name').value, fee: fee, pickupLoc: document.getElementById('jastip-pickup').value, deadline: document.getElementById('jastip-deadline').value, desc: document.getElementById('jastip-desc').value, status: 'open', createdAt: serverTimestamp() }); 
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', currentUser.uid), { points: (userData.points || 0) + 15 }); window.uiToggleModal('modal-offer-jastip'); e.target.reset(); window.uiShowToast("Jastip dibuka! (+15 Poin)"); 
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'jastips'), { 
+                openerName: userData.name, openerChurch: userData.church, openerWa: userData.wa, openerUid: currentUser.uid, 
+                itemName: document.getElementById('jastip-name').value, fee: fee, pickupLoc: document.getElementById('jastip-pickup').value, 
+                deadline: document.getElementById('jastip-deadline').value, desc: document.getElementById('jastip-desc').value, 
+                status: 'open', createdAt: serverTimestamp(),
+                scope: document.getElementById('jastip-scope').value, userKel: userData.kel, userKota: userData.kota, userChurch: userData.church
+            }); 
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', currentUser.uid), { points: (userData.points || 0) + 15 }); 
+            window.uiToggleModal('modal-offer-jastip'); e.target.reset(); window.uiShowToast("Jastip dibuka! (+15 Poin)"); 
         });
         
         function listenToJastip() {
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'jastips'), (snapshot) => {
-                const jastips = []; snapshot.forEach(doc => { if (doc.data().status === 'open') jastips.push({ id: doc.id, ...doc.data() }); });
+                const jastips = []; 
+                snapshot.forEach(doc => { 
+                    const d = { id: doc.id, ...doc.data() };
+                    if (d.status === 'open' && window.checkScope(d)) {
+                        jastips.push(d); 
+                    }
+                });
                 document.getElementById('list-jastip').innerHTML = jastips.length ? jastips.map(j => `
                     <div class="surface p-4 rounded-xl border border-emerald-100 shadow-sm flex flex-col relative">
                         ${(j.openerUid === userData?.uid || userData?.role === 'superadmin') ? `<button onclick="window.deleteDocById('jastips', '${j.id}')" class="absolute top-2 right-2 text-red-400 bg-red-50 rounded-full w-6 h-6 flex justify-center items-center"><i class="fa-solid fa-xmark text-xs"></i></button>` : ''}
@@ -1306,7 +1451,7 @@
                         <p class="text-[9px] text-red-500 font-bold mb-3">Batas PO: ${new Date(j.deadline).toLocaleString('id-ID', {weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</p>
                         <div class="flex items-center gap-2 mb-3">
                             <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-[10px]">${j.openerName.charAt(0)}</div>
-                            <div class="text-[10px]"><span class="font-bold block">${j.openerName}</span><span class="opacity-70">${j.openerChurch}</span></div>
+                            <div class="text-[10px]"><span class="font-bold block">${j.openerName}</span><span class="opacity-70">${j.openerChurch}</span> ${window.getScopeBadge(j)}</div>
                         </div>
                         <a href="${getWaLink(j.openerWa, `Syalom ${j.openerName}, saya ${userData?.name} mau ikut PO/Jastip ${j.itemName}.`)}" target="_blank" class="w-full text-center bg-emerald-500 text-white text-xs font-bold py-2.5 rounded-lg shadow-sm hover:bg-emerald-600 transition">Ikut Titip via WA</a>
                     </div>`).join('') : '<div class="col-span-full text-center opacity-50 py-4 text-xs">Belum ada PO/Jastip yang buka.</div>';
