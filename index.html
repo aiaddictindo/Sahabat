@@ -721,7 +721,7 @@
     <!-- === SCRIPT FIREBASE LOGIC === -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc, updateDoc, deleteDoc, serverTimestamp, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         let firebaseConfig = {
@@ -747,48 +747,83 @@
         const getEmailFromWa = (wa) => `${wa.replace(/\D/g, '')}@sk5.app`;
         const getSafeChurchId = (name) => name.toLowerCase().replace(/[^a-z0-9]/g, '_');
 
-        // FITUR BARU: Memuat Daftar Gereja dari Database
+        let unsubscribeChurches = null;
+        
         window.listenToChurches = () => {
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'churches'), (snap) => {
+            if (unsubscribeChurches) unsubscribeChurches();
+            
+            // Fallback default supaya tidak pernah kosong
+            const defaultChurches = ["GPdI Cipondoh Makmur Tangerang", "GBI Bukit Sion Mlaten Gempol", "GPdI Jajag Banyuwangi"];
+            
+            unsubscribeChurches = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'churches'), (snap) => {
                 let churchList = [];
-                snap.forEach(doc => churchList.push({id: doc.id, ...doc.data()}));
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    if(!defaultChurches.includes(data.name)) churchList.push({id: doc.id, name: data.name});
+                });
                 
                 // Isi ke form pendaftaran
                 const select = document.getElementById('reg-church');
                 if (select) {
                     const currentVal = select.value;
-                    select.innerHTML = '<option value="">Pilih Gereja Asal...</option>' + 
-                        churchList.map(c => `<option value="${c.name}">${c.name}</option>`).join('') +
-                        '<option value="Gereja Lainnya">Gereja Lainnya...</option>';
-                    select.value = currentVal;
+                    let html = '<option value="">Pilih Gereja Asal...</option>';
+                    defaultChurches.forEach(c => html += `<option value="${c}">${c}</option>`);
+                    churchList.forEach(c => html += `<option value="${c.name}">${c.name}</option>`);
+                    html += '<option value="Gereja Lainnya">Gereja Lainnya...</option>';
+                    select.innerHTML = html;
+                    if(currentVal && html.includes(`value="${currentVal}"`)) select.value = currentVal;
                 }
 
                 // Isi ke daftar Admin Superadmin
                 const admList = document.getElementById('list-adm-churches');
                 if (admList) {
-                    admList.innerHTML = churchList.map(c => `
-                        <div class="surface p-3 rounded-lg border flex justify-between items-center shadow-sm">
-                            <span class="text-xs font-bold"><i class="fa-solid fa-church text-gray-400 mr-2"></i>${c.name}</span>
-                            <button onclick="window.deleteDocById('churches', '${c.id}')" class="text-red-500 bg-red-50 px-2 py-1 rounded"><i class="fa-solid fa-trash text-[10px]"></i></button>
-                        </div>
-                    `).join('') || '<p class="text-xs opacity-50">Belum ada gereja terdaftar.</p>';
+                    let admHtml = '';
+                    defaultChurches.forEach(c => {
+                        admHtml += `<div class="surface p-3 rounded-lg border flex justify-between items-center shadow-sm opacity-60">
+                            <span class="text-xs font-bold"><i class="fa-solid fa-church text-gray-400 mr-2"></i>${c} (Bawaan)</span></div>`;
+                    });
+                    churchList.forEach(c => {
+                        admHtml += `<div class="surface p-3 rounded-lg border flex justify-between items-center shadow-sm">
+                            <span class="text-xs font-bold"><i class="fa-solid fa-church text-primary mr-2"></i>${c.name}</span>
+                            <button onclick="window.deleteDocById('churches', '${c.id}')" class="text-red-500 bg-red-50 px-2 py-1 rounded"><i class="fa-solid fa-trash text-[10px]"></i></button></div>`;
+                    });
+                    admList.innerHTML = admHtml;
+                }
+            }, (error) => {
+                console.error("Gagal memuat gereja, gunakan fallback:", error);
+                const select = document.getElementById('reg-church');
+                if (select) {
+                    let html = '<option value="">Pilih Gereja Asal...</option>';
+                    defaultChurches.forEach(c => html += `<option value="${c}">${c}</option>`);
+                    html += '<option value="Gereja Lainnya">Gereja Lainnya...</option>';
+                    select.innerHTML = html;
                 }
             });
         };
-        
-        // Panggil saat aplikasi dimuat agar bisa dipakai saat pendaftaran
-        if(db) listenToChurches();
 
         if(auth) {
             onAuthStateChanged(auth, async (user) => {
-                if (user && !user.isAnonymous) {
-                    currentUser = user;
-                    document.getElementById('auth-screen').classList.add('hidden');
-                    listenToMyProfile();
+                if (user) {
+                    // Panggil listen gereja ketika sudah ada izin baca (baik anonim maupun tidak)
+                    window.listenToChurches();
+                    
+                    if (!user.isAnonymous) {
+                        currentUser = user;
+                        document.getElementById('auth-screen').classList.add('hidden');
+                        listenToMyProfile();
+                    } else {
+                        // Jika anonim (hanya numpang baca data), tetap di halaman login
+                        document.getElementById('main-app').classList.add('hidden');
+                        document.getElementById('pending-screen').classList.add('hidden');
+                        document.getElementById('auth-screen').classList.remove('hidden');
+                    }
                 } else {
                     document.getElementById('main-app').classList.add('hidden');
                     document.getElementById('pending-screen').classList.add('hidden');
                     document.getElementById('auth-screen').classList.remove('hidden');
+                    
+                    // Lakukan login anonim otomatis untuk membaca data daftar gereja (pendaftaran)
+                    try { await signInAnonymously(auth); } catch(e) { console.error("Anon Login Error:", e); }
                 }
             });
         }
@@ -819,6 +854,7 @@
                 document.getElementById('btn-register').textContent = "Mendaftarkan...";
                 let initRole = 'user'; let initStatus = 'pending';
 
+                // createUserWithEmailAndPassword otomatis menimpa sesi anonim sebelumnya
                 const cred = await createUserWithEmailAndPassword(auth, getEmailFromWa(wa), pass);
                 await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', cred.user.uid), {
                     name, wa, area, church, role: initRole, status: initStatus, points: 0,
@@ -875,7 +911,7 @@
             // Initialize all real-time listeners for content
             listenToGlobals(); 
             listenToLocalChurch(userData.church); 
-            listenToPrayers(); // Fitur Baru
+            listenToPrayers(); 
             listenToRides(); 
             listenToJastip();
             listenToCares(); 
@@ -899,7 +935,6 @@
             onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'church_content', getSafeChurchId(churchName)), (docSnap) => {
                 let data = docSnap.exists() ? docSnap.data() : { announcements: [], schedules: [] }; localContentCache = data;
                 
-                // FITUR BARU: Render Media Khotbah
                 const khotbahContainer = document.getElementById('beranda-khotbah');
                 if(data.sermon) {
                     khotbahContainer.innerHTML = `
@@ -968,9 +1003,13 @@
         window.saveNewChurch = async () => {
             const name = document.getElementById('adm-new-church-name').value;
             if (!name) return;
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'churches'), { name, createdAt: serverTimestamp() });
-            document.getElementById('adm-new-church-name').value = '';
-            window.uiShowToast("Gereja berhasil ditambahkan!");
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'churches'), { name, createdAt: serverTimestamp() });
+                document.getElementById('adm-new-church-name').value = '';
+                window.uiShowToast("Gereja berhasil ditambahkan!");
+            } catch (err) {
+                window.uiShowToast("Gagal menyimpan: " + err.message);
+            }
         };
 
         // ==========================================
