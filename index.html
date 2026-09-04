@@ -54,6 +54,8 @@
 
         .surface { background-color: var(--color-surface); }
         ::-webkit-scrollbar { width: 0px; background: transparent; }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         
         .glass-nav {
             background: rgba(var(--color-surface), 0.9); backdrop-filter: blur(12px);
@@ -277,26 +279,33 @@
                     </div>
                 </div>
 
-                <!-- PAGE: USAHA (Jastip, Makanan, Jasa) -->
+                <!-- PAGE: USAHA (Jastip, Makanan, Barang Umum, Jasa) -->
                 <div id="page-usaha" class="page-section hidden space-y-4">
                     <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-4 rounded-xl flex items-center gap-4">
                         <div class="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-800 text-amber-600 dark:text-amber-300 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-store"></i></div>
                         <div>
                             <h2 class="font-bold text-sm leading-tight mb-1">Pasar Jemaat</h2>
-                            <p class="text-[10px] opacity-70 leading-snug">Dukung usaha sesama: Beli makanan, gunakan jasa profesi, atau ikut Jastip.</p>
+                            <p class="text-[10px] opacity-70 leading-snug">Dukung usaha sesama: Beli makanan, barang, jasa profesi, atau ikut Jastip.</p>
                         </div>
                     </div>
                     
-                    <div class="flex bg-gray-200/50 dark:bg-gray-800/50 rounded-xl p-1 relative overflow-x-auto hide-scroll">
-                        <button onclick="window.uiSwitchTab('usaha', 'makanan')" id="tab-usaha-makanan" class="flex-1 min-w-[85px] py-2 text-[11px] font-bold rounded-lg bg-surface text-amber-600 shadow-sm z-10 transition-all">Makanan & PO</button>
-                        <button onclick="window.uiSwitchTab('usaha', 'jasa')" id="tab-usaha-jasa" class="flex-1 min-w-[85px] py-2 text-[11px] font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all">Jasa Profesi</button>
-                        <button onclick="window.uiSwitchTab('usaha', 'jastip')" id="tab-usaha-jastip" class="flex-1 min-w-[85px] py-2 text-[11px] font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all">Jastip</button>
+                    <div class="flex bg-gray-200/50 dark:bg-gray-800/50 rounded-xl p-1 relative overflow-x-auto hide-scroll gap-1">
+                        <button onclick="window.uiSwitchTab('usaha', 'makanan')" id="tab-usaha-makanan" class="flex-none px-3 py-2 text-[11px] font-bold rounded-lg bg-surface text-amber-600 shadow-sm z-10 transition-all whitespace-nowrap">Makanan & PO</button>
+                        <button onclick="window.uiSwitchTab('usaha', 'barang')" id="tab-usaha-barang" class="flex-none px-3 py-2 text-[11px] font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all whitespace-nowrap">Barang Umum</button>
+                        <button onclick="window.uiSwitchTab('usaha', 'jasa')" id="tab-usaha-jasa" class="flex-none px-3 py-2 text-[11px] font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all whitespace-nowrap">Jasa Profesi</button>
+                        <button onclick="window.uiSwitchTab('usaha', 'jastip')" id="tab-usaha-jastip" class="flex-none px-3 py-2 text-[11px] font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all whitespace-nowrap">Jastip</button>
                     </div>
 
                     <!-- Sub-view Makanan -->
                     <div id="view-usaha-makanan" class="space-y-4">
-                        <button onclick="window.uiToggleModal('modal-add-food')" class="w-full bg-amber-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-md hover:bg-amber-600 transition"><i class="fa-solid fa-utensils"></i> Promosikan Makanan / Buka PO</button>
+                        <button onclick="window.uiToggleModal('modal-add-food')" class="w-full bg-amber-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-md hover:bg-amber-600 transition"><i class="fa-solid fa-utensils"></i> Buka Resto / Jual Makanan</button>
                         <div id="list-foods" class="grid grid-cols-1 gap-4 pb-4"></div>
+                    </div>
+
+                    <!-- Sub-view Barang Umum (Baru) -->
+                    <div id="view-usaha-barang" class="hidden space-y-4">
+                        <button onclick="window.uiToggleModal('modal-add-goods')" class="w-full bg-cyan-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-md hover:bg-cyan-600 transition"><i class="fa-solid fa-box-open"></i> Jual Barang / Elektronik</button>
+                        <div id="list-goods-items" class="grid grid-cols-1 gap-4 pb-4"></div>
                     </div>
 
                     <!-- Sub-view Jasa Profesi -->
@@ -606,22 +615,34 @@
             </div>
         </div>
 
-        <!-- Modal Tambah Makanan -->
+        <!-- Modal Tambah Makanan (DIPERBARUI FORM-NYA) -->
         <div id="modal-add-food" class="absolute inset-0 bg-black/60 z-[70] hidden flex-col justify-end backdrop-blur-sm">
             <div class="surface rounded-t-3xl p-6 w-full animate-slide-up h-[85vh] overflow-y-auto">
-                <div class="flex justify-between items-center mb-5"><h3 class="font-bold text-lg"><i class="fa-solid fa-utensils text-amber-500 mr-2"></i>Jual Makanan / PO</h3><button onclick="window.uiToggleModal('modal-add-food')" class="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full"><i class="fa-solid fa-xmark"></i></button></div>
+                <div class="flex justify-between items-center mb-5"><h3 class="font-bold text-lg"><i class="fa-solid fa-utensils text-amber-500 mr-2"></i>Buka Resto / Jual Makanan</h3><button onclick="window.uiToggleModal('modal-add-food')" class="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full"><i class="fa-solid fa-xmark"></i></button></div>
                 <form id="form-add-food" class="space-y-4">
-                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Nama Makanan / Produk</label><input type="text" id="food-name" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Cth: Pepes Tahu Ayam"></div>
-                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase text-emerald-600">Harga (Rp)</label><input type="text" id="food-price" required class="w-full p-3 rounded-xl border border-emerald-300 bg-emerald-50 dark:bg-emerald-900/20 text-sm" placeholder="Cth: Rp 15.000 / porsi"></div>
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Nama Resto/Warung & Jenis Makanan</label>
+                        <input type="text" id="food-name" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Cth: Kedai Makmur - Chinese Food & Bakmi">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase text-emerald-600">Range Harga (Rp)</label>
+                        <input type="text" id="food-price" required class="w-full p-3 rounded-xl border border-emerald-300 bg-emerald-50 dark:bg-emerald-900/20 text-sm" placeholder="Cth: Mulai Rp 15.000 - Rp 35.000">
+                    </div>
                     <div>
                         <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Sistem Penjualan</label>
                         <select id="food-system" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm">
-                            <option value="po">Pre-Order (PO)</option>
-                            <option value="ready">Ready Stock (Tersedia Tiap Hari)</option>
+                            <option value="ready">Ready Stock (Tersedia / Warung Buka)</option>
+                            <option value="po">Sistem Pre-Order (PO)</option>
                         </select>
                     </div>
-                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Batas Waktu PO / Jadwal Pengiriman</label><input type="text" id="food-time" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Cth: PO tutup Kamis, Kirim Sabtu"></div>
-                    <div><label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Deskripsi & Cara Pengambilan</label><textarea id="food-desc" required rows="2" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Jelaskan isi makanan dan lokasi ambil..."></textarea></div>
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Jadwal Buka / Batas Waktu PO</label>
+                        <input type="text" id="food-time" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Cth: Buka tiap hari jam 09:00 - 20:00">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Daftar Menu & Keterangan</label>
+                        <textarea id="food-desc" required rows="4" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Tuliskan daftar menu di sini:&#10;- Bakmi Ayam&#10;- Nasi Goreng&#10;&#10;Melayani makan di tempat..."></textarea>
+                    </div>
                     <div>
                         <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase text-indigo-600"><i class="fa-solid fa-earth-asia"></i> Jangkauan Posting</label>
                         <select id="food-scope" class="w-full p-3 rounded-xl border border-indigo-200 bg-indigo-50 dark:bg-indigo-900/10 text-sm focus:border-indigo-500">
@@ -631,7 +652,46 @@
                             <option value="nasional">Seluruh Indonesia</option>
                         </select>
                     </div>
-                    <button type="submit" class="w-full bg-amber-500 text-white font-bold py-3.5 rounded-xl shadow-lg mt-2 text-sm">Promosikan Makanan (+10 Poin)</button>
+                    <button type="submit" class="w-full bg-amber-500 text-white font-bold py-3.5 rounded-xl shadow-lg mt-2 text-sm">Buka Lapak Makanan (+10 Poin)</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal Tambah Barang Umum (BARU) -->
+        <div id="modal-add-goods" class="absolute inset-0 bg-black/60 z-[70] hidden flex-col justify-end backdrop-blur-sm">
+            <div class="surface rounded-t-3xl p-6 w-full animate-slide-up h-[85vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-5"><h3 class="font-bold text-lg"><i class="fa-solid fa-box-open text-cyan-500 mr-2"></i>Jual Barang Umum</h3><button onclick="window.uiToggleModal('modal-add-goods')" class="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full"><i class="fa-solid fa-xmark"></i></button></div>
+                <form id="form-add-goods" class="space-y-4">
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Nama Barang / Toko</label>
+                        <input type="text" id="goods-name" required class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Cth: Kipas Angin Cosmos / Toko Elektronik Jaya">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Kondisi Barang</label>
+                        <select id="goods-condition" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm">
+                            <option value="baru">Baru (New)</option>
+                            <option value="bekas">Bekas (Preloved / Second)</option>
+                            <option value="toko">Aneka Barang Toko Fisik</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase text-emerald-600">Harga (Rp)</label>
+                        <input type="text" id="goods-price" required class="w-full p-3 rounded-xl border border-emerald-300 bg-emerald-50 dark:bg-emerald-900/20 text-sm" placeholder="Cth: Rp 150.000 atau Rp 5rb - 100rb">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase">Deskripsi & Spesifikasi</label>
+                        <textarea id="goods-desc" required rows="3" class="w-full p-3 rounded-xl border border-gray-300 bg-transparent text-sm" placeholder="Jelaskan kondisi barang, kelengkapan, atau alamat toko fisik..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold opacity-70 mb-1 uppercase text-indigo-600"><i class="fa-solid fa-earth-asia"></i> Jangkauan Posting</label>
+                        <select id="goods-scope" class="w-full p-3 rounded-xl border border-indigo-200 bg-indigo-50 dark:bg-indigo-900/10 text-sm focus:border-indigo-500">
+                            <option value="kota">Hanya Kota/Kab Saya</option>
+                            <option value="nasional">Seluruh Indonesia (Siap Kirim Paket)</option>
+                            <option value="kelurahan">Hanya Kelurahan Saya</option>
+                            <option value="gereja">Hanya Gereja Lokal Saya</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full bg-cyan-500 text-white font-bold py-3.5 rounded-xl shadow-lg mt-2 text-sm">Posting Barang (+10 Poin)</button>
                 </form>
             </div>
         </div>
@@ -725,17 +785,24 @@
 
         window.uiSwitchTab = function(context, tabName) {
             document.querySelectorAll(`button[id^="tab-${context}-"]`).forEach(b => { 
-                b.className = "flex-1 min-w-[85px] py-2 text-[11px] font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all"; 
+                b.className = "flex-1 py-2 text-[11px] font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all"; 
                 if(context === 'adm') b.className = "px-3 py-1.5 text-[11px] font-bold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg whitespace-nowrap transition-colors";
                 if(context === 'doa') b.className = "flex-1 py-2 text-sm font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all";
                 if(context === 'transport' || context === 'asuh') b.className = "flex-1 py-2 text-sm font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all";
+                if(context === 'usaha') b.className = "flex-none px-3 py-2 text-[11px] font-bold rounded-lg text-gray-500 bg-transparent z-10 transition-all whitespace-nowrap";
             });
             document.querySelectorAll(`div[id^="view-${context}-"]`).forEach(v => v.classList.add('hidden'));
             
             const activeBtn = document.getElementById(`tab-${context}-${tabName}`);
             if(context === 'transport') activeBtn.className = "flex-1 py-2 text-sm font-bold rounded-lg bg-surface text-primary shadow-sm z-10 transition-all";
             else if(context === 'asuh') activeBtn.className = "flex-1 py-2 text-sm font-bold rounded-lg bg-surface text-rose-500 shadow-sm z-10 transition-all";
-            else if(context === 'usaha') activeBtn.className = "flex-1 min-w-[85px] py-2 text-[11px] font-bold rounded-lg bg-surface text-amber-600 shadow-sm z-10 transition-all";
+            else if(context === 'usaha') {
+                let colorClass = 'text-amber-600';
+                if(tabName === 'barang') colorClass = 'text-cyan-600';
+                else if(tabName === 'jasa') colorClass = 'text-indigo-600';
+                else if(tabName === 'jastip') colorClass = 'text-emerald-600';
+                activeBtn.className = `flex-none px-3 py-2 text-[11px] font-bold rounded-lg bg-surface ${colorClass} shadow-sm z-10 transition-all whitespace-nowrap`;
+            }
             else if(context === 'adm') activeBtn.className = "px-3 py-1.5 text-[11px] font-bold bg-primary text-white rounded-lg whitespace-nowrap transition-colors";
             else if(context === 'doa') activeBtn.className = "flex-1 py-2 text-sm font-bold rounded-lg bg-surface text-purple-600 shadow-sm z-10 transition-all";
 
@@ -1336,7 +1403,7 @@
         }
 
         // ==========================================
-        // FITUR USAHA & JASTIP
+        // FITUR USAHA (MAKANAN, BARANG BARU, JASA, JASTIP)
         // ==========================================
         document.getElementById('form-add-food')?.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -1348,7 +1415,20 @@
                 scope: document.getElementById('food-scope').value, userKel: userData.kel, userKota: userData.kota, userChurch: userData.church
             });
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', currentUser.uid), { points: (userData.points || 0) + 10 }); 
-            window.uiToggleModal('modal-add-food'); e.target.reset(); window.uiShowToast("Makanan diposting! (+10 Poin)");
+            window.uiToggleModal('modal-add-food'); e.target.reset(); window.uiShowToast("Lapak makanan diposting! (+10 Poin)");
+        });
+
+        // Event Listener Barang Umum
+        document.getElementById('form-add-goods')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'businesses'), { 
+                type: 'goods', name: document.getElementById('goods-name').value, price: document.getElementById('goods-price').value, 
+                condition: document.getElementById('goods-condition').value, desc: document.getElementById('goods-desc').value, 
+                userName: userData.name, userChurch: userData.church, userWa: userData.wa, userUid: currentUser.uid, createdAt: serverTimestamp(),
+                scope: document.getElementById('goods-scope').value, userKel: userData.kel, userKota: userData.kota, userChurch: userData.church
+            });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', currentUser.uid), { points: (userData.points || 0) + 10 }); 
+            window.uiToggleModal('modal-add-goods'); e.target.reset(); window.uiShowToast("Barang diposting! (+10 Poin)");
         });
 
         document.getElementById('form-add-service')?.addEventListener('submit', async (e) => {
@@ -1365,23 +1445,31 @@
 
         function listenToBusinesses() {
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'businesses'), (snapshot) => {
-                const foods = []; const services = [];
+                const foods = []; const services = []; const goods = [];
                 snapshot.forEach(doc => { 
                     const d = { id: doc.id, ...doc.data() }; 
                     if (window.checkScope(d)) {
-                        d.type === 'food' ? foods.push(d) : services.push(d); 
+                        if(d.type === 'food') foods.push(d);
+                        else if(d.type === 'service') services.push(d);
+                        else if(d.type === 'goods') goods.push(d); 
                     }
                 });
                 
+                // Render Makanan
                 document.getElementById('list-foods').innerHTML = foods.length ? foods.map(f => `
                     <div class="surface p-4 rounded-xl border shadow-sm relative overflow-hidden">
                         <div class="absolute top-0 right-0 ${f.system === 'po' ? 'bg-orange-500' : 'bg-emerald-500'} text-white text-[9px] font-bold px-3 py-1 rounded-bl-lg shadow-sm">
                             ${f.system === 'po' ? 'PRE-ORDER (PO)' : 'READY STOCK'}
                         </div>
                         <h4 class="font-bold text-amber-700 text-lg mb-1 mt-2">${f.name}</h4>
-                        <p class="text-sm font-bold text-emerald-600 mb-2">${f.price}</p>
-                        <p class="text-[11px] opacity-80 mb-2 leading-relaxed bg-amber-50 p-2 rounded-lg border border-amber-100">"${f.desc}"</p>
-                        <p class="text-[10px] font-semibold text-gray-500 mb-3"><i class="fa-solid fa-truck-fast"></i> Jadwal: ${f.time}</p>
+                        <p class="text-[11px] font-bold text-emerald-600 mb-2 bg-emerald-50 inline-block px-2 py-1 rounded border border-emerald-100"><i class="fa-solid fa-tag"></i> Harga: ${f.price}</p>
+                        
+                        <div class="text-[11px] opacity-80 mb-2 leading-relaxed bg-amber-50 p-3 rounded-lg border border-amber-100">
+                            <span class="font-bold text-amber-800 block mb-1">Daftar Menu & Info:</span>
+                            <div class="whitespace-pre-wrap">${f.desc}</div>
+                        </div>
+                        
+                        <p class="text-[10px] font-semibold text-gray-500 mb-3"><i class="fa-regular fa-clock"></i> Info Waktu: ${f.time}</p>
                         <div class="flex items-center justify-between border-t pt-3">
                             <div class="flex items-center gap-2">
                                 <div class="w-7 h-7 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-[10px] font-bold"><i class="fa-solid fa-shop"></i></div>
@@ -1389,11 +1477,33 @@
                             </div>
                             <div class="flex gap-2 items-center">
                                 ${(f.userUid === userData?.uid || userData?.role === 'superadmin') ? `<button onclick="window.deleteDocById('businesses', '${f.id}')" class="text-red-400 text-xs px-2 py-1.5 bg-red-50 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : ''}
-                                <a href="${getWaLink(f.userWa, `Syalom ${f.userName}, saya ingin pesan ${f.name} yang dijual di Sahabat Kristus.`)}" target="_blank" class="bg-amber-500 hover:bg-amber-600 text-white text-[11px] font-bold px-4 py-2 rounded-lg shadow-sm transition">Pesan via WA</a>
+                                <a href="${getWaLink(f.userWa, `Syalom ${f.userName}, saya lihat info jual makanan (${f.name}) di Sahabat Kristus. Saya ingin pesan.`)}" target="_blank" class="bg-amber-500 hover:bg-amber-600 text-white text-[11px] font-bold px-4 py-2 rounded-lg shadow-sm transition">Pesan via WA</a>
                             </div>
                         </div>
                     </div>`).join('') : '<p class="text-center opacity-50 text-xs py-4">Belum ada makanan/PO yang dijual.</p>';
 
+                // Render Barang Umum
+                document.getElementById('list-goods-items').innerHTML = goods.length ? goods.map(g => `
+                    <div class="surface p-4 rounded-xl border shadow-sm relative">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-cyan-700 text-base">${g.name}</h4>
+                            <span class="text-[9px] font-bold px-2 py-1 rounded bg-cyan-50 text-cyan-700 border border-cyan-100 uppercase">${g.condition === 'baru' ? 'Baru' : (g.condition === 'toko' ? 'Barang Toko' : 'Bekas/Preloved')}</span>
+                        </div>
+                        <p class="text-[11px] font-bold text-emerald-600 mb-2"><i class="fa-solid fa-tag"></i> Harga: ${g.price}</p>
+                        <p class="text-[11px] opacity-80 mb-3 bg-gray-50 p-2 rounded whitespace-pre-wrap">"${g.desc}"</p>
+                        <div class="flex items-center justify-between border-t pt-3">
+                            <div class="flex items-center gap-2">
+                                <div class="w-6 h-6 rounded-full bg-cyan-100 text-cyan-600 flex items-center justify-center text-[10px] font-bold"><i class="fa-solid fa-box"></i></div>
+                                <div class="text-[9px]"><span class="font-bold block">${g.userName}</span><span class="opacity-70">${g.userChurch}</span> ${window.getScopeBadge(g)}</div>
+                            </div>
+                            <div class="flex gap-2 items-center">
+                                ${(g.userUid === userData?.uid || userData?.role === 'superadmin') ? `<button onclick="window.deleteDocById('businesses', '${g.id}')" class="text-red-400 text-xs px-2 py-1.5 bg-red-50 rounded"><i class="fa-solid fa-trash"></i></button>` : ''}
+                                <a href="${getWaLink(g.userWa, `Syalom ${g.userName}, saya tertarik dengan barang (${g.name}) yang dijual di Sahabat Kristus.`)}" target="_blank" class="bg-cyan-500 text-white text-[11px] font-bold px-3 py-2 rounded-lg shadow-sm">Tanya/Beli</a>
+                            </div>
+                        </div>
+                    </div>`).join('') : '<p class="text-center opacity-50 text-xs py-4">Belum ada barang umum yang dijual.</p>';
+
+                // Render Jasa
                 document.getElementById('list-services').innerHTML = services.length ? services.map(s => `
                     <div class="surface p-4 rounded-xl border shadow-sm">
                         <div class="flex justify-between items-start mb-2">
